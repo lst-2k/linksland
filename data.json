@@ -1,71 +1,112 @@
 {
   "venue": "Royal Dublin",
   "par": "72",
-  "season": {},
-  "weekCount": 1,
-  "history": "",
+  "season": {
+    "Geordieboy85": {
+      "points": 250,
+      "console": "PS",
+      "lastRank": null
+    },
+    "Colly45": {
+      "points": 200,
+      "console": "Xbox",
+      "lastRank": null
+    },
+    "z.dub.z": {
+      "points": 150,
+      "console": "PS",
+      "lastRank": null
+    },
+    "Keep_of_Kalessin": {
+      "points": 150,
+      "console": "PS",
+      "lastRank": null
+    },
+    "Mr LongPole": {
+      "points": 150,
+      "console": "Xbox",
+      "lastRank": null
+    },
+    "Hoplinkz": {
+      "points": 150,
+      "console": "PS",
+      "lastRank": null
+    },
+    "WingisBack": {
+      "points": 70,
+      "console": "PS",
+      "lastRank": null
+    },
+    "x3offthetee": {
+      "points": 60,
+      "console": "Xbox",
+      "lastRank": null
+    }
+  },
+  "weekCount": 2,
+  "history": "<div class=\"history-item\"><div class=\"history-header\" onclick=\"toggleHistory(this)\"><span>Week 1: Royal Dublin</span><span>▼</span></div><div class=\"history-content\"><table><tbody><tr><td>1</td><td>Geordieboy85</td><td>137</td><td>-7</td><td>250</td></tr><tr><td>2</td><td>Colly45</td><td>140</td><td>-4</td><td>200</td></tr><tr><td>T3</td><td>z.dub.z</td><td>141</td><td>-3</td><td>150</td></tr><tr><td>T3</td><td>Keep_of_Kalessin</td><td>141</td><td>-3</td><td>150</td></tr><tr><td>T3</td><td>Mr LongPole</td><td>141</td><td>-3</td><td>150</td></tr><tr><td>T3</td><td>Hoplinkz</td><td>141</td><td>-3</td><td>150</td></tr><tr><td>7</td><td>WingisBack</td><td>143</td><td>-1</td><td>70</td></tr><tr><td>8</td><td>x3offthetee</td><td>144</td><td>E</td><td>60</td></tr></tbody></table></div></div>",
   "players": [
     {
       "name": "Geordieboy85",
       "console": "PS",
-      "r1": "68",
-      "r2": "69",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     },
     {
       "name": "Colly45",
       "console": "Xbox",
-      "r1": "68",
-      "r2": "72",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     },
     {
       "name": "z.dub.z",
       "console": "PS",
-      "r1": "69",
-      "r2": "72",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     },
     {
       "name": "Keep_of_Kalessin",
       "console": "PS",
-      "r1": "70",
-      "r2": "71",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     },
     {
       "name": "Mr LongPole",
       "console": "Xbox",
-      "r1": "71",
-      "r2": "70",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     },
     {
       "name": "Hoplinkz",
       "console": "PS",
-      "r1": "69",
-      "r2": "72",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     },
     {
       "name": "WingisBack",
       "console": "PS",
-      "r1": "73",
-      "r2": "70",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     },
     {
       "name": "x3offthetee",
       "console": "Xbox",
-      "r1": "71",
-      "r2": "73",
+      "r1": "0",
+      "r2": "0",
       "r3": "0",
       "r4": "0"
     }
