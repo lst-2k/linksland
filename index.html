@@ -3,41 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Golf League: Live Leaderboard</title>
+    <title>Live Leaderboard</title>
     <style>
         :root {
             --ps-blue: #0070CC; --xbox-green: #107C10; --pc-steam: #171D25;
             --golf-green: #2e7d32; --sig-purple: #673ab7; --up-green: #4caf50; --down-red: #f44336;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 15px; color: #333; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 0; color: #333; margin: 0; }
         
-        /* Brand Header */
-        .league-header { 
-            background: white; padding: 20px; text-align: center; 
-            border-bottom: 4px solid var(--golf-green); margin-bottom: 20px;
+        /* Full Width Banner Header */
+        .league-banner { 
+            background: white; padding: 0; text-align: center; 
+            border-bottom: 4px solid var(--golf-green);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            width: 100%;
         }
-        .league-logo { max-height: 80px; margin-bottom: 10px; }
         
-        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        /* Constraints the banner image to the maximum width of content */
+        .banner-container {
+            max-width: 1100px;
+            margin: auto;
+            display: flex; /* Ensures image centers within container if it smaller than 1100px */
+            justify-content: center;
+        }
+
+        .league-logo { 
+            width: 100%; /* Stretches logo full width of its container */
+            max-width: 1100px; /* But not wider than the main content area */
+            height: auto; /* Maintains aspect ratio */
+            display: block; /* Removes bottom whitespace */
+        }
         
-        /* Layout */
-        .header-meta { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        /* Content Containers */
+        .container { max-width: 1100px; margin: 25px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .table-container { width: 100%; overflow-x: auto; margin-bottom: 30px; border-radius: 8px; border: 1px solid #eee; -webkit-overflow-scrolling: touch; }
         
+        /* Meta Header (Venue, Signature status) */
+        .header-meta { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+
         /* Tables */
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th { background: #263238; color: white; padding: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         td { padding: 12px; border-bottom: 1px solid #f1f1f1; text-align: center; white-space: nowrap; }
-        .season-table th { background: var(--golf-green); }
         
-        /* Badges */
+        /* Display elements */
         .badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 10px; font-weight: 800; display: inline-block; }
         .bg-ps { background: var(--ps-blue); } .bg-xbox { background: var(--xbox-green); } .bg-pc { background: var(--pc-steam); }
         .trend-up { color: var(--up-green); font-weight: bold; } .trend-down { color: var(--down-red); font-weight: bold; }
         .sig-tag { background: var(--sig-purple); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         
-        /* History */
+        /* History Section */
         .history-item { margin-bottom: 8px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
         .history-header { background: #455a64; color: white; padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
         .history-content { display: none; padding: 10px; background: #fff; }
@@ -48,9 +63,10 @@
 </head>
 <body>
 
-<header class="league-header">
-    <img src="logo.png" alt="League Logo" class="league-logo" onerror="this.style.display='none'">
-    <h1 style="margin:0; color:#263238;">Pro Golf League</h1>
+<header class="league-banner">
+    <div class="banner-container">
+        <img src="logo.png" alt="League Logo Banner" class="league-logo" onerror="this.style.display='none'">
+    </div>
 </header>
 
 <div class="container">
@@ -86,7 +102,7 @@
 </div>
 
 <script>
-    // AUTOMATIC FETCH LOGIC
+    // AUTOMATIC FETCH LOGIC (Looking for data.json)
     async function fetchData() {
         try {
             const response = await fetch('data.json');
@@ -96,7 +112,7 @@
         } catch (err) {
             console.error(err);
             document.getElementById('liveBody').innerHTML = 
-                '<tr><td colspan="9" class="loading-msg">Data file (data.json) not found. Admin needs to upload export.</td></tr>';
+                '<tr><td colspan="9" class="loading-msg">Data file (data.json) not found. Admin needs to update export.</td></tr>';
         }
     }
 
@@ -104,7 +120,7 @@
         document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'}`;
         document.getElementById('sigStatus').innerHTML = data.isSig ? '<span class="sig-tag">⭐ SIGNATURE EVENT</span>' : '';
 
-        // 1. Current Tournament (Live)
+        // 1. Current Tournament (Live) with Smart Par
         const lBody = document.getElementById('liveBody');
         lBody.innerHTML = '';
         const parPerRound = parseInt(data.par) || 72;
@@ -117,6 +133,7 @@
             return { ...p, total, toPar, activeRounds };
         });
 
+        // Sort by To Par
         processedPlayers.sort((a,b) => a.toPar - b.toPar);
 
         processedPlayers.forEach((p, i) => {
@@ -159,6 +176,7 @@
                 </tr>`;
         });
 
+        // 3. Render History
         document.getElementById('historyContainer').innerHTML = data.history || '';
     }
 
@@ -171,11 +189,12 @@
     
     function toggleHistory(h) {
         const c = h.nextElementSibling;
-        c.style.display = (c.style.display === 'block') ? 'none' : 'block';
-        h.querySelector('span:last-child').innerText = (c.style.display === 'block') ? '▲' : '▼';
+        const vis = (c.style.display === 'block');
+        c.style.display = vis ? 'none' : 'block';
+        h.querySelector('span:last-child').innerText = vis ? '▼' : '▲';
     }
 
-    // Start the fetch on load
+    // Start the automatic fetch
     window.onload = fetchData;
 </script>
 
