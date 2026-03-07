@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Golf League: Standings & Results</title>
+    <style>
+        :root {
+            --ps-blue: #0070CC; --xbox-green: #107C10; --pc-steam: #171D25;
+            --golf-green: #2e7d32; --sig-purple: #673ab7; --up-green: #4caf50; --down-red: #f44336;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 15px; color: #333; line-height: 1.5; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        
+        /* Scrolling Containers */
+        .table-container { width: 100%; overflow-x: auto; margin-bottom: 30px; border-radius: 8px; border: 1px solid #eee; -webkit-overflow-scrolling: touch; }
+        
+        /* Header */
+        .header-section { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .load-zone { margin-bottom: 20px; text-align: right; }
+        .btn-load { background: #1976d2; color: white; padding: 8px 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85em; transition: 0.2s; }
+        .btn-load:hover { background: #1565c0; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { background: #263238; color: white; padding: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 12px; border-bottom: 1px solid #f1f1f1; text-align: center; white-space: nowrap; }
+        .season-table th { background: var(--golf-green); }
+        
+        /* Status & Badges */
+        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 10px; font-weight: 800; display: inline-block; }
+        .bg-ps { background: var(--ps-blue); } .bg-xbox { background: var(--xbox-green); } .bg-pc { background: var(--pc-steam); }
+        .trend-up { color: var(--up-green); font-weight: bold; } .trend-down { color: var(--down-red); font-weight: bold; }
+        .sig-tag { background: var(--sig-purple); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
+        
+        /* History Accordions */
+        .history-item { margin-bottom: 8px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
+        .history-header { background: #455a64; color: white; padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+        .history-content { display: none; padding: 10px; background: #fff; }
+        h3 { color: var(--golf-green); border-left: 4px solid var(--golf-green); padding-left: 12px; margin-top: 35px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="load-zone">
+        <input type="file" id="importFile" style="display:none" onchange="loadData(event)">
+        <button class="btn-load" onclick="document.getElementById('importFile').click()">📂 Upload Latest League Data</button>
+    </div>
+
+    <div class="header-section">
+        <h2 id="venueName" style="margin:0;">⛳ League Standings</h2>
+        <div id="sigStatus"></div>
+    </div>
+
+    <h3>Season Standings</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr><th>Rank</th><th>Trend</th><th>Player</th><th>Platform</th><th>Total Points</th></tr>
+            </thead>
+            <tbody id="seasonBody">
+                <tr><td colspan="5" style="padding:50px; color:#999; font-style:italic;">Upload the league JSON file to view standings.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Current Tournament Leaderboard</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr><th>Pos</th><th>Player</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th><th>To Par</th><th>Pts Earned</th></tr>
+            </thead>
+            <tbody id="liveBody"></tbody>
+        </table>
+    </div>
+
+    <h3>📜 Tournament History</h3>
+    <div id="historyContainer"></div>
+</div>
+
+<script>
+    function loadData(e) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const data = JSON.parse(event.target.result);
+            renderLeaderboard(data);
+        };
+        reader.readAsText(e.target.files[0]);
+    }
+
+    function renderLeaderboard(data) {
+        // 1. Update Venue & Signature Status
+        document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'}`;
+        document.getElementById('sigStatus').innerHTML = data.isSig ? '<span class="sig-tag">⭐ SIGNATURE EVENT (2X PTS)</span>' : '';
+
+        // 2. Season Standings
+        const sBody = document.getElementById('seasonBody');
+        sBody.innerHTML = '';
+        const sortedSeason = Object.entries(data.season).sort((a,b) => b[1].points - a[1].points);
+        
+        sortedSeason.forEach((item, index) => {
+            const rank = index + 1;
+            const p = item[1];
+            let trend = '<span style="color:#999">—</span>';
+            if (p.lastRank) {
+                if (rank < p.lastRank) trend = '<span class="trend-up">▲</span>';
+                else if (rank > p.lastRank) trend = '<span class="trend-down">▼</span>';
+            }
+            sBody.innerHTML += `
+                <tr>
+                    <td>${rank}</td>
+                    <td>${trend}</td>
+                    <td style="text-align:left; padding-left:20px; font-weight:600;">${rank === 1 ? '🏆 ' : ''}${item[0]}</td>
+                    <td><span class="badge ${getBadgeClass(p.console)}">${p.console}</span></td>
+                    <td style="font-weight:bold;">${p.points.toLocaleString()}</td>
+                </tr>`;
+        });
+
+        // 3. Live Leaderboard (Smart Par Logic)
+        const lBody = document.getElementById('liveBody');
+        lBody.innerHTML = '';
+        const parPerRound = parseInt(data.par) || 72;
+        
+        // Prepare display data with Smart Par
+        let processedPlayers = data.players.map(p => {
+            const scores = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0];
+            const activeRounds = scores.filter(s => s > 0).length;
+            const total = scores.reduce((a,b) => a+b, 0);
+            const toPar = activeRounds > 0 ? total - (activeRounds * parPerRound) : 999;
+            return { ...p, total, toPar, activeRounds };
+        });
+
+        // Sort by To Par
+        processedPlayers.sort((a,b) => a.toPar - b.toPar);
+
+        processedPlayers.forEach((p, i) => {
+            if (p.activeRounds === 0) return; // Skip players with no scores
+
+            let trueRank = i + 1;
+            for(let j=0; j<i; j++) { if(processedPlayers[j].toPar === p.toPar) { trueRank = j+1; break; } }
+            const isTie = (processedPlayers[i-1]?.toPar === p.toPar) || (processedPlayers[i+1]?.toPar === p.toPar);
+            
+            const toParDisplay = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
+
+            lBody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold;">${isTie ? 'T'+trueRank : trueRank}</td>
+                    <td style="text-align:left;">${p.name}</td>
+                    <td>${p.r1 || '-'}</td><td>${p.r2 || '-'}</td><td>${p.r3 || '-'}</td><td>${p.r4 || '-'}</td>
+                    <td style="background:#f9f9f9; font-weight:bold;">${p.total}</td>
+                    <td style="font-weight:bold; color:${p.toPar < 0 ? 'var(--down-red)' : 'inherit'}">${toParDisplay}</td>
+                    <td style="color:var(--golf-green); font-weight:bold;">${calculatePts(trueRank, data.isSig)}</td>
+                </tr>`;
+        });
+
+        // 4. History
+        document.getElementById('historyContainer').innerHTML = data.history || '';
+    }
+
+    function calculatePts(rank, isSig) {
+        let pts = rank === 1 ? 250 : rank === 2 ? 200 : rank === 3 ? 150 : rank === 4 ? 100 : Math.max(0, 100 - ((rank - 4) * 10));
+        return isSig ? pts * 2 : pts;
+    }
+
+    function getBadgeClass(v) { return v==='PS'?'bg-ps':v==='Xbox'?'bg-xbox':'bg-pc'; }
+    
+    function toggleHistory(h) {
+        const c = h.nextElementSibling;
+        const vis = c.style.display === 'block';
+        c.style.display = vis ? 'none' : 'block';
+        h.querySelector('span:last-child').innerText = vis ? '▼' : '▲';
+    }
+</script>
+
+</body>
+</html>
