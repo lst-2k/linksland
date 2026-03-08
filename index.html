@@ -19,16 +19,13 @@
             padding: 0; color: #333; margin: 0; 
         }
         
-        /* Banner stretches across top */
         .league-banner { background: white; text-align: center; border-bottom: 4px solid var(--golf-green); width: 100%; }
         .league-logo { width: 100%; height: auto; display: block; }
         
-        /* Full Width Container */
         .main-content { width: 100%; margin: 0; padding: 0; }
 
-        .section-header { padding: 20px 15px; background: #fff; border-bottom: 1px solid #ddd; }
+        .section-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; }
 
-        /* Unified Scrolling Containers */
         .scroller { 
             width: 100%; 
             overflow-x: auto; 
@@ -38,35 +35,39 @@
             margin-bottom: 20px;
         }
         
-        table { width: 100%; border-collapse: collapse; min-width: 800px; background: white; }
-        th { background: #2c3e50; color: white; padding: 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-        td { padding: 14px; border-bottom: 1px solid #eee; text-align: center; }
+        /* Table Optimization */
+        table { width: 100%; border-collapse: collapse; background: white; table-layout: auto; }
+        th { background: #2c3e50; color: white; padding: 12px 8px; font-size: 11px; text-transform: uppercase; white-space: nowrap; }
+        td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; }
 
-        /* Left Alignment for Player Header and Cell */
-        .player-col { text-align: left !important; padding-left: 15px; }
+        /* Narrow Columns (Width fits content) */
+        .w-shrink { width: 1%; white-space: nowrap; }
+
+        /* Player Alignment */
+        .player-col { text-align: left !important; padding-left: 10px; width: auto; }
 
         tr:hover td { background-color: #f8f9fa; }
 
         /* Icon Styling */
-        .fa-brands { font-size: 1.1em; vertical-align: middle; margin-right: 10px; width: 20px; text-align: center; }
+        .fa-brands { font-size: 1.1em; vertical-align: middle; margin-right: 6px; width: 18px; text-align: center; }
         .fa-playstation { color: var(--ps-blue); }
         .fa-xbox { color: var(--xbox-green); }
         .fa-steam { color: var(--steam-blue); }
 
-        .to-par-cell { font-weight: 900; font-size: 1.2em; background: #fcfcfc; }
+        .to-par-cell { font-weight: 900; font-size: 1.1em; background: #fcfcfc; width: 60px; }
         .under-par { color: var(--under-red); } 
         
         .sig-tag { background: var(--sig-purple); color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         
         h3 { 
-            color: var(--golf-green); font-size: 1.3em; 
-            padding: 15px; margin: 0; background: #f9f9f9;
+            color: var(--golf-green); font-size: 1.2em; 
+            padding: 12px 15px; margin: 0; background: #f9f9f9;
             border-bottom: 1px solid #eee;
         }
 
-        /* History Accordion Styling for scrolling */
+        /* History Accordion */
         .history-header { background: #455a64; color: white; padding: 15px; cursor: pointer; font-weight: 600; border-bottom: 1px solid #333; }
-        .history-content { display: none; width: 100%; overflow-x: auto; }
+        .history-content { display: none; width: 100%; }
     </style>
 </head>
 <body>
@@ -77,7 +78,7 @@
 
 <div class="main-content">
     <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="venueName" style="margin:0;">⛳ Loading...</h2>
+        <h2 id="venueName" style="margin:0; font-size: 1.4em;">⛳ Loading...</h2>
         <div id="sigStatus"></div>
     </div>
 
@@ -86,15 +87,15 @@
         <table>
             <thead>
                 <tr>
-                    <th>Pos</th>
+                    <th class="w-shrink">Pos</th>
                     <th class="player-col">Player</th>
-                    <th>To Par</th>
-                    <th>R1</th>
-                    <th>R2</th>
-                    <th>R3</th>
-                    <th>R4</th>
-                    <th>Total</th>
-                    <th>Pts</th>
+                    <th class="w-shrink">To Par</th>
+                    <th class="w-shrink">R1</th>
+                    <th class="w-shrink">R2</th>
+                    <th class="w-shrink">R3</th>
+                    <th class="w-shrink">R4</th>
+                    <th class="w-shrink">Total</th>
+                    <th class="w-shrink">Pts</th>
                 </tr>
             </thead>
             <tbody id="liveBody"></tbody>
@@ -106,10 +107,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Trend</th>
+                    <th class="w-shrink">Rank</th>
+                    <th class="w-shrink">Trend</th>
                     <th class="player-col">Player</th>
-                    <th>Total Points</th>
+                    <th class="w-shrink">Total Points</th>
                 </tr>
             </thead>
             <tbody id="seasonBody"></tbody>
@@ -128,7 +129,7 @@
             const data = await response.json();
             renderLeaderboard(data);
         } catch (err) {
-            document.getElementById('liveBody').innerHTML = `<tr><td colspan="9" style="padding:40px;">Waiting for tournament data...</td></tr>`;
+            document.getElementById('liveBody').innerHTML = `<tr><td colspan="9" style="padding:40px;">Check back soon for tournament updates.</td></tr>`;
         }
     }
 
@@ -164,16 +165,15 @@
             for(let j=0; j<i; j++) { if(processedPlayers[j].toPar === p.toPar) { trueRank = j+1; break; } }
             const isTie = (processedPlayers[i-1]?.toPar === p.toPar) || (processedPlayers[i+1]?.toPar === p.toPar);
             const toParDisplay = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-            const parClass = p.toPar < 0 ? 'under-par' : '';
 
             lBody.innerHTML += `
                 <tr>
-                    <td style="font-weight:bold; color:#888; width:50px;">${isTie ? 'T'+trueRank : trueRank}</td>
+                    <td class="w-shrink" style="font-weight:bold; color:#888;">${isTie ? 'T'+trueRank : trueRank}</td>
                     <td class="player-col" style="font-weight:600;">${getPlatformIcon(p.console)} ${p.name}</td>
-                    <td class="to-par-cell ${parClass}">${toParDisplay}</td>
-                    <td>${p.r1 || '-'}</td><td>${p.r2 || '-'}</td><td>${p.r3 || '-'}</td><td>${p.r4 || '-'}</td>
-                    <td style="background:#fcfcfc; font-weight:bold;">${p.total}</td>
-                    <td style="color:var(--golf-green); font-weight:bold;">${calculatePts(trueRank, data.isSig)}</td>
+                    <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisplay}</td>
+                    <td class="w-shrink">${p.r1 || '-'}</td><td class="w-shrink">${p.r2 || '-'}</td><td class="w-shrink">${p.r3 || '-'}</td><td class="w-shrink">${p.r4 || '-'}</td>
+                    <td class="w-shrink" style="background:#fcfcfc; font-weight:bold;">${p.total}</td>
+                    <td class="w-shrink" style="color:var(--golf-green); font-weight:bold;">${calculatePts(trueRank, data.isSig)}</td>
                 </tr>`;
         });
 
@@ -191,24 +191,51 @@
             }
             sBody.innerHTML += `
                 <tr>
-                    <td style="font-weight:bold; width:50px;">${rank}</td>
-                    <td>${trend}</td>
+                    <td class="w-shrink" style="font-weight:bold;">${rank}</td>
+                    <td class="w-shrink">${trend}</td>
                     <td class="player-col" style="font-weight:600;">${getPlatformIcon(p.console)} ${item[0]}</td>
-                    <td style="font-weight:bold; color:var(--golf-green);">${p.points.toLocaleString()}</td>
+                    <td class="w-shrink" style="font-weight:bold; color:var(--golf-green);">${p.points.toLocaleString()}</td>
                 </tr>`;
         });
 
-        // History render with scrolling wrapper
+        // HISTORY PROCESSING
         const histCont = document.getElementById('historyContainer');
         histCont.innerHTML = data.history || '';
         
-        // Wrap every history table in a scroller if it isn't already
-        document.querySelectorAll('.history-content table').forEach(table => {
-            if (table.parentElement.className !== 'scroller') {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'scroller';
-                table.parentNode.insertBefore(wrapper, table);
-                wrapper.appendChild(table);
+        // Final polish for History tables
+        document.querySelectorAll('.history-content').forEach(content => {
+            const table = content.querySelector('table');
+            if (table) {
+                // Apply player left alignment and column shrinking
+                table.querySelectorAll('tr').forEach(row => {
+                    const cells = row.querySelectorAll('td, th');
+                    if (cells.length > 1) {
+                        cells[1].classList.add('player-col'); // Player col
+                        cells[0].classList.add('w-shrink');   // Pos col
+                    }
+                });
+
+                // Swap Total and To Par columns in History
+                // Assuming History structure matches the old leaderboard (Pos, Player, R1-R4, Total, To Par)
+                // We want: Pos, Player, To Par, R1, R2, R3, R4, Total
+                table.querySelectorAll('tr').forEach(row => {
+                    const cells = Array.from(row.cells);
+                    if (cells.length >= 8) {
+                        const toParCell = cells[7]; // Originally last
+                        const totalCell = cells[6]; // Originally second to last
+                        const playerCell = cells[1];
+                        // Move To Par after Player
+                        playerCell.parentNode.insertBefore(toParCell, playerCell.nextSibling);
+                    }
+                });
+
+                // Wrap in scroller
+                if (content.className !== 'scroller') {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'scroller';
+                    table.parentNode.insertBefore(wrap, table);
+                    wrap.appendChild(table);
+                }
             }
         });
     }
