@@ -54,24 +54,36 @@
         </table>
     </div>
 
-    <h3>Season Standings</h3>
-    <div class="scroller">
-        <table>
-            <thead><tr><th class="w-shrink">Rank</th><th class="w-shrink">Trend</th><th class="player-col">Player</th><th class="w-shrink">Total Points</th></tr></thead>
-            <tbody id="seasonBody"></tbody>
-        </table>
+		<h2>Season Standings</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Player</th>
+					<th>Total Points</th>
+				</tr>
+			</thead>
+			<tbody id="seasonBody">
+				</tbody>
+		</table>
     </div>
     <div id="historyContainer"></div>
 </div>
 
 <script>
-    async function fetchData() {
-        try {
-            const response = await fetch('./data.json?v=' + new Date().getTime());
-            const data = await response.json();
-            renderLeaderboard(data);
-        } catch (err) { document.getElementById('liveBody').innerHTML = `<tr><td colspan="10" style="padding:40px;">Waiting for data.json...</td></tr>`; }
+    async function loadLeaderboard() {
+    try {
+        const response = await fetch('data.json');
+        const data = await response.json();
+        
+        // Render all three sections
+        renderLeaderboard(data);
+        renderStandings(data.season); 
+        renderHistory(data.history);
+    } catch (e) {
+        console.error("Error loading data.json:", e);
     }
+}
 
     function getPlatformIcon(p) {
         const c = (p || "").toLowerCase();
@@ -90,64 +102,74 @@
         return { total: base + bonus, bonusOnly: bonus };
     }
 
- function renderLeaderboard(data) {
-    document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
+function renderLeaderboard(data) {
     const lBody = document.getElementById('liveBody');
+    if(!lBody) return;
     lBody.innerHTML = '';
     const par = parseInt(data.par) || 72;
     
-    // 1. Sort Players by score
+    // Sort by To Par
     let players = data.players.map(p => {
         const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
         const total = s.reduce((a,b) => a+b, 0);
         return { ...p, total, toPar: s.length > 0 ? total - (s.length * par) : 999, active: s.length };
     }).sort((a,b) => a.toPar - b.toPar);
 
-    // 2. Apply Tie Logic
     players.forEach((p, i) => {
         if (p.active === 0) return;
 
-        // Determine Rank and Tie Status
         let displayRank = i + 1;
         let isTied = false;
-
-        // Check if player has same score as person above OR person below
         const scoreAbove = i > 0 ? players[i-1].toPar : null;
         const scoreBelow = i < players.length - 1 ? players[i+1].toPar : null;
 
         if (p.toPar === scoreAbove || p.toPar === scoreBelow) {
             isTied = true;
-            // Find the first occurrence of this score to get the "Top" rank of the tie
             let firstOccurence = i;
-            while (firstOccurence > 0 && players[firstOccurence - 1].toPar === p.toPar) {
-                firstOccurence--;
-            }
+            while (firstOccurence > 0 && players[firstOccurence - 1].toPar === p.toPar) firstOccurence--;
             displayRank = firstOccurence + 1;
         }
 
         const rankLabel = isTied ? `T${displayRank}` : displayRank;
-        
-        // 3. Calculate Points based on the 'base' rank (Tied players get same points)
-        const ptsData = calculatePts(displayRank, data.isSig, (parseInt(p.birdies)>0), p.isLow);
-
-        // 4. Formatting
         const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-        let bDisp = "-";
-        if (ptsData.bonusOnly > 0) {
-            bDisp = `+${ptsData.bonusOnly} ${(parseInt(p.birdies)>0)?'🐦':''} ${(p.isLow)?'📉':''}`;
-        }
 
         lBody.innerHTML += `
             <tr>
-                <td class="w-shrink" style="font-weight:bold; color:#888;">${rankLabel}</td>
-                <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
-                <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
+                <td style="font-weight:bold;">${rankLabel}</td>
+                <td>${p.name}</td>
+                <td class="${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
                 <td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td>
-                <td class="w-shrink" style="font-weight:bold;">${p.total}</td>
-                <td class="w-shrink" style="color:#0277bd; font-weight:bold;">${bDisp}</td>
-                <td class="w-shrink" style="color:var(--golf-green); font-weight:bold; background:#f0f7f0;">${ptsData.total}</td>
+                <td>${p.total}</td>
             </tr>`;
     });
+}
+
+function renderStandings(seasonData) {
+    const sBody = document.getElementById('seasonBody');
+    if (!sBody || !seasonData) return;
+    sBody.innerHTML = '';
+
+    // Convert object to array and sort by points descending
+    const sortedStandings = Object.entries(seasonData)
+        .map(([name, info]) => ({ name, ...info }))
+        .sort((a, b) => b.points - a.points);
+
+    sortedStandings.forEach((player, index) => {
+        sBody.innerHTML += `
+            <tr>
+                <td style="font-weight:bold;">${index + 1}</td>
+                <td>${player.name}</td>
+                <td style="color:var(--golf-green); font-weight:bold;">${player.points}</td>
+            </tr>`;
+    });
+}
+
+// 4. HISTORY RENDER
+function renderHistory(historyHTML) {
+    const hDiv = document.getElementById('historyContainer');
+    if (hDiv && historyHTML) {
+        hDiv.innerHTML = historyHTML;
+    }
 }
     window.onload = fetchData;
 </script>
