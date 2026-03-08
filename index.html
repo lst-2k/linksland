@@ -16,10 +16,7 @@
         table { width: 100%; border-collapse: collapse; background: white; }
         th { background: #2c3e50; color: white; padding: 12px 8px; font-size: 11px; text-transform: uppercase; white-space: nowrap; }
         td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; }
-        
-        /* Left-align player columns in all tables including history */
         .player-col, .history-content td:nth-child(2) { text-align: left !important; padding-left: 15px; font-weight: 500; }
-        
         .fa-brands { font-size: 1.1em; vertical-align: middle; margin-right: 6px; width: 18px; text-align: center; }
         .fa-playstation { color: var(--ps-blue); } .fa-xbox { color: var(--xbox-green); } .fa-steam { color: var(--steam-blue); }
         .to-par-cell { font-weight: 900; font-size: 1.1em; background: #fcfcfc; width: 60px; }
@@ -89,7 +86,16 @@
         if (isSig) base *= 2;
         const bVal = isSig ? 20 : 10;
         let bonus = (hasBirds ? bVal : 0) + (hasLow ? bVal : 0);
-        return { total: base + bonus, bonusOnly: bonus };
+        
+        let bonusLabel = "-";
+        if(bonus > 0) {
+            bonusLabel = "";
+            if(hasBirds) bonusLabel += "🐦";
+            if(hasLow) bonusLabel += "🔥";
+            bonusLabel += `+${bonus}`;
+        }
+        
+        return { total: base + bonus, bonusLabel: bonusLabel };
     }
 
     function renderLeaderboard(data) {
@@ -106,11 +112,14 @@
             if (p.active === 0) return;
             let firstIdx = i;
             while (firstIdx > 0 && players[firstIdx - 1].toPar === p.toPar) firstIdx--;
+            
             const isTied = (i > 0 && players[i-1].toPar === p.toPar) || (i < players.length-1 && players[i+1].toPar === p.toPar);
             const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
+            
             const ptsData = calculatePts(firstIdx + 1, data.isSig, (parseInt(p.birdies) > 0), p.isLow);
             const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-            lBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold;">+${ptsData.bonusOnly}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;
+            
+            lBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold; font-size:0.9em;">${ptsData.bonusLabel}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;
         });
     }
 
