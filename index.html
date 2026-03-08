@@ -23,7 +23,6 @@
         .sig-tag { background: #673ab7; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7em; }
         h2, h3 { color: #2c3e50; padding: 15px; margin: 0; background: #f9f9f9; }
         .history-header { background: #fff; padding: 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .history-header:hover { background: #f1f1f1; }
         .history-header::after { content: '\f0d7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
         .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 10px; }
     </style>
@@ -38,7 +37,7 @@
         <div id="sigStatus"></div>
     </div>
 
-    <h3>Current Tournament Leaderboard</h3>
+    <h3>Live Tournament</h3>
     <div class="scroller">
         <table>
             <thead>
@@ -66,12 +65,18 @@
         try {
             const response = await fetch('data.json');
             const data = await response.json();
+            
+            // FIX 1: Set the Venue Name and Date from data.json
             document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
             if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE EVENT</span>';
+            
+            // Render all sections
             renderLeaderboard(data);
             renderStandings(data.season); 
             renderHistory(data.history);
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error("Error loading data.json:", e);
+        }
     }
 
     function getPlatformIcon(p) {
@@ -81,6 +86,7 @@
         return '<i class="fa-brands fa-steam"></i>';
     }
 
+    // New 200-175-150-100 Point Logic
     function calculatePts(rank, isSig, hasBirds, hasLow) {
         let base = rank === 1 ? 200 : rank === 2 ? 175 : rank === 3 ? 150 : rank === 4 ? 100 : Math.max(0, 100 - ((rank - 4) * 10));
         if (isSig) base *= 2;
@@ -91,8 +97,10 @@
 
     function renderLeaderboard(data) {
         const lBody = document.getElementById('liveBody');
+        if(!lBody) return;
         lBody.innerHTML = '';
-        const par = parseInt(data.par) || 72;
+        const par = data.par || 72;
+        
         let players = data.players.map(p => {
             const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
             const total = s.reduce((a,b) => a+b, 0);
@@ -101,27 +109,51 @@
 
         players.forEach((p, i) => {
             if (p.active === 0) return;
+
             let firstIdx = i;
             while (firstIdx > 0 && players[firstIdx - 1].toPar === p.toPar) firstIdx--;
             const isTied = (i > 0 && players[i-1].toPar === p.toPar) || (i < players.length-1 && players[i+1].toPar === p.toPar);
             const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
+            
             const ptsData = calculatePts(firstIdx + 1, data.isSig, (parseInt(p.birdies) > 0), p.isLow);
             const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-            lBody.innerHTML += `<tr><td style="font-weight:bold; color:#888;">${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold;">+${ptsData.bonusOnly}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;
+
+            lBody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold; color:#888;">${rankLabel}</td>
+                    <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
+                    <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
+                    <td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td>
+                    <td>${p.total}</td>
+                    <td style="color:#0277bd; font-weight:bold;">+${ptsData.bonusOnly}</td>
+                    <td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td>
+                </tr>`;
         });
     }
 
     function renderStandings(seasonData) {
         const sBody = document.getElementById('seasonBody');
         if (!sBody || !seasonData) return;
-        const sorted = Object.entries(seasonData).map(([name, info]) => ({ name, ...info })).sort((a, b) => b.points - a.points);
         sBody.innerHTML = '';
+
+        // FIX 2: Correctly mapping the name from the Object Key in data.json
+        const sorted = Object.entries(seasonData)
+            .map(([name, info]) => ({ name, ...info }))
+            .sort((a, b) => b.points - a.points);
+
         sorted.forEach((p, i) => {
             let firstIdx = i;
             while (firstIdx > 0 && sorted[firstIdx - 1].points === p.points) firstIdx--;
             const isTied = (i > 0 && sorted[i-1].points === p.points) || (i < sorted.length-1 && sorted[i+1].points === p.points);
             const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
-            sBody.innerHTML += `<tr><td style="font-weight:bold; color:#888;">${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td>${p.eventsPlayed || 0}</td><td style="color:var(--golf-green); font-weight:bold;">${p.points}</td></tr>`;
+
+            sBody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold; color:#888;">${rankLabel}</td>
+                    <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
+                    <td>${p.eventsPlayed || 0}</td>
+                    <td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
+                </tr>`;
         });
     }
 
@@ -132,12 +164,7 @@
         }
     }
 
-    function toggleHistory(header) {
-        const content = header.nextElementSibling;
-        const isVisible = content.style.display === "block";
-        document.querySelectorAll('.history-content').forEach(c => c.style.display = "none");
-        content.style.display = isVisible ? "none" : "block";
-    }
+    // FIX 3: Change window.onload to call loadLeaderboard, not fetchData
     window.onload = loadLeaderboard;
 </script>
 </body>
