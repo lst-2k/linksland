@@ -1,19 +1,19 @@
 {
-  "venue": "Jolly Roger Open",
-  "date": "march 8-15 2026",
+  "venue": "Heartbreak Invitational",
+  "date": "7-15 March 2026",
   "par": "72",
   "isSig": false,
   "players": [
     {
-      "name": "Tenbobnote",
-      "console": "PS",
-      "total": 135,
+      "name": "Horusphoenix",
+      "console": "Xbox",
+      "total": 132,
       "birdies": "",
       "isLow": true,
-      "toParVal": -9
+      "toParVal": -12
     },
     {
-      "name": "Colly45x",
+      "name": "x3offthetee",
       "console": "Xbox",
       "total": 136,
       "birdies": "",
@@ -21,7 +21,7 @@
       "toParVal": -8
     },
     {
-      "name": "Hopz",
+      "name": "Hoplinkz",
       "console": "PS",
       "total": 137,
       "birdies": "10",
@@ -29,15 +29,23 @@
       "toParVal": -7
     },
     {
-      "name": "Wing is back",
+      "name": "Geordieboy85",
       "console": "PS",
-      "total": 139,
+      "total": 138,
       "birdies": "",
       "isLow": false,
-      "toParVal": -5
+      "toParVal": -6
     },
     {
-      "name": "Mr Longpole",
+      "name": "WingisBack",
+      "console": "PS",
+      "total": 138,
+      "birdies": "",
+      "isLow": false,
+      "toParVal": -6
+    },
+    {
+      "name": "Tenbobnote",
       "console": "PS",
       "total": 140,
       "birdies": "",
@@ -45,31 +53,7 @@
       "toParVal": -4
     },
     {
-      "name": "Horusphoenix",
-      "console": "Xbox",
-      "total": 141,
-      "birdies": "",
-      "isLow": false,
-      "toParVal": -3
-    },
-    {
-      "name": "Zdubz",
-      "console": "PS",
-      "total": 141,
-      "birdies": "",
-      "isLow": false,
-      "toParVal": -3
-    },
-    {
       "name": "Keep_of_Kalessin",
-      "console": "PS",
-      "total": 141,
-      "birdies": "",
-      "isLow": false,
-      "toParVal": -3
-    },
-    {
-      "name": "Geordieboy85",
       "console": "PS",
       "total": 142,
       "birdies": "",
@@ -77,172 +61,78 @@
       "toParVal": -2
     },
     {
-      "name": "x3offthetee",
+      "name": "Colly45x",
       "console": "Xbox",
-      "total": 143,
+      "total": 142,
       "birdies": "",
       "isLow": false,
-      "toParVal": -1
-    },
-    {
-      "name": "Hendomedes",
-      "console": "Xbox",
-      "total": 146,
-      "birdies": "",
-      "isLow": false,
-      "toParVal": 2
-    },
-    {
-      "name": "Hammers1man",
-      "console": "Xbox",
-      "total": 151,
-      "birdies": "",
-      "isLow": false,
-      "toParVal": 7
+      "toParVal": -2
     },
     {
       "name": "Polekatt",
       "console": "PC",
-      "total": 152,
+      "total": 160,
       "birdies": "",
       "isLow": false,
-      "toParVal": 8
+      "toParVal": 16
     },
     {
-      "name": "BfcTino",
-      "console": "PS",
-      "total": 154,
+      "name": "MrLongpole",
+      "console": "Xbox",
+      "total": 0,
       "birdies": "",
       "isLow": false,
-      "toParVal": 10
+      "toParVal": 999
     }
   ],
+  "backupSeason": {},
+  "backupHistory": "",
   "season": {
-    "Colly45x": {
-      "points": 445,
-      "console": "Xbox",
-      "eventsPlayed": null
-    },
-    "Wing is back": {
-      "points": 360,
-      "console": "PS",
-      "eventsPlayed": null
-    },
-    "Geordieboy85": {
-      "points": 210,
-      "console": "PS",
-      "eventsPlayed": null
-    },
-    "Mr Longpole": {
-      "points": 190,
-      "console": "PS",
-      "eventsPlayed": null
-    },
-    "Hopz": {
-      "points": 250,
-      "console": "PS",
-      "eventsPlayed": null
-    },
-    "Tenbobnote": {
-      "points": 290,
-      "console": "PS",
-      "eventsPlayed": null
-    },
     "Horusphoenix": {
-      "points": 160,
+      "points": 210,
       "console": "Xbox",
-      "eventsPlayed": null
-    },
-    "Hendomedes": {
-      "points": 90,
-      "console": "Xbox",
-      "eventsPlayed": null
+      "eventsPlayed": 1
     },
     "x3offthetee": {
-      "points": 90,
+      "points": 175,
       "console": "Xbox",
-      "eventsPlayed": null
+      "eventsPlayed": 1
     },
-    "Hammers1man": {
-      "points": 70,
-      "console": "Xbox",
-      "eventsPlayed": null
-    },
-    "BfcTino": {
-      "points": 30,
+    "Hoplinkz": {
+      "points": 160,
       "console": "PS",
-      "eventsPlayed": null
+      "eventsPlayed": 1
     },
-    "Polekatt": {
-      "points": 40,
-      "console": "PC",
-      "eventsPlayed": null
-    },
-    "Zdubz": {
-      "points": 90,
+    "Geordieboy85": {
+      "points": 100,
       "console": "PS",
-      "eventsPlayed": null
+      "eventsPlayed": 1
     },
-    "Keep_of_Kalessin": {
+    "WingisBack": {
+      "points": 100,
+      "console": "PS",
+      "eventsPlayed": 1
+    },
+    "Tenbobnote": {
       "points": 80,
       "console": "PS",
       "eventsPlayed": 1
-    }
-  },
-  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">The Lofthouse Trophy - 16-23 Feb 2026 </div><div class=\"history-content\"><table><thead><tr><th>Pos</th><th>Player</th><th>To Par</th><th>Total</th></tr></thead><tbody><tr><td>T1</td><td>Colly45x</td><td>-12</td><td>132</td></tr><tr><td>T1</td><td>Wing is back</td><td>-12</td><td>132</td></tr><tr><td>3</td><td>Geordieboy85</td><td>-10</td><td>134</td></tr><tr><td>4</td><td>Mr Longpole</td><td>-9</td><td>135</td></tr><tr><td>5</td><td>Hopz</td><td>-8</td><td>136</td></tr><tr><td>T6</td><td>Tenbobnote</td><td>-7</td><td>137</td></tr><tr><td>T6</td><td>Horusphoenix</td><td>-7</td><td>137</td></tr><tr><td>8</td><td>Hendomedes</td><td>-3</td><td>141</td></tr><tr><td>T9</td><td>x3offthetee</td><td>+1</td><td>145</td></tr><tr><td>T9</td><td>Hammers1man</td><td>+1</td><td>145</td></tr><tr><td>T11</td><td>BfcTino</td><td>+5</td><td>149</td></tr><tr><td>T11</td><td>Polekatt</td><td>+5</td><td>149</td></tr><tr><td>13</td><td>Zdubz</td><td>+999</td><td>0</td></tr></tbody></table></div><div class=\"history-header\" onclick=\"toggleHistory(this)\">Jolly Roger Open (march 8-15 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr><tr><td>1</td><td>Tenbobnote</td><td>-9</td><td>135</td></tr><tr><td>2</td><td>Colly45x</td><td>-8</td><td>136</td></tr><tr><td>3</td><td>Hopz</td><td>-7</td><td>137</td></tr><tr><td>4</td><td>Wing is back</td><td>-5</td><td>139</td></tr><tr><td>5</td><td>Mr Longpole</td><td>-4</td><td>140</td></tr><tr><td>6</td><td>Horusphoenix</td><td>-3</td><td>141</td></tr><tr><td>T6</td><td>Zdubz</td><td>-3</td><td>141</td></tr><tr><td>T6</td><td>Keep_of_Kalessin</td><td>-3</td><td>141</td></tr><tr><td>9</td><td>Geordieboy85</td><td>-2</td><td>142</td></tr><tr><td>10</td><td>x3offthetee</td><td>-1</td><td>143</td></tr><tr><td>11</td><td>Hendomedes</td><td>+2</td><td>146</td></tr><tr><td>12</td><td>Hammers1man</td><td>+7</td><td>151</td></tr><tr><td>13</td><td>Polekatt</td><td>+8</td><td>152</td></tr><tr><td>14</td><td>BfcTino</td><td>+10</td><td>154</td></tr></table></div>",
-  "backupSeason": {
+    },
+    "Keep_of_Kalessin": {
+      "points": 70,
+      "console": "PS",
+      "eventsPlayed": 1
+    },
     "Colly45x": {
-      "points": 270,
-      "console": "Xbox"
-    },
-    "Wing is back": {
-      "points": 260,
-      "console": "PS"
-    },
-    "Geordieboy85": {
-      "points": 160,
-      "console": "PS"
-    },
-    "Mr Longpole": {
-      "points": 100,
-      "console": "PS"
-    },
-    "Hopz": {
-      "points": 90,
-      "console": "PS"
-    },
-    "Tenbobnote": {
-      "points": 80,
-      "console": "PS"
-    },
-    "Horusphoenix": {
-      "points": 80,
-      "console": "Xbox"
-    },
-    "Hendomedes": {
-      "points": 60,
-      "console": "Xbox"
-    },
-    "x3offthetee": {
-      "points": 50,
-      "console": "Xbox"
-    },
-    "Hammers1man": {
-      "points": 50,
-      "console": "Xbox"
-    },
-    "BfcTino": {
-      "points": 30,
-      "console": "PS"
+      "points": 70,
+      "console": "Xbox",
+      "eventsPlayed": 1
     },
     "Polekatt": {
-      "points": 30,
-      "console": "PC"
-    },
-    "Zdubz": {
-      "points": 10,
-      "console": "PS"
+      "points": 50,
+      "console": "PC",
+      "eventsPlayed": 1
     }
   },
-  "backupHistory": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">The Lofthouse Trophy - 16-23 Feb 2026 </div><div class=\"history-content\"><table><thead><tr><th>Pos</th><th>Player</th><th>To Par</th><th>Total</th></tr></thead><tbody><tr><td>T1</td><td>Colly45x</td><td>-12</td><td>132</td></tr><tr><td>T1</td><td>Wing is back</td><td>-12</td><td>132</td></tr><tr><td>3</td><td>Geordieboy85</td><td>-10</td><td>134</td></tr><tr><td>4</td><td>Mr Longpole</td><td>-9</td><td>135</td></tr><tr><td>5</td><td>Hopz</td><td>-8</td><td>136</td></tr><tr><td>T6</td><td>Tenbobnote</td><td>-7</td><td>137</td></tr><tr><td>T6</td><td>Horusphoenix</td><td>-7</td><td>137</td></tr><tr><td>8</td><td>Hendomedes</td><td>-3</td><td>141</td></tr><tr><td>T9</td><td>x3offthetee</td><td>+1</td><td>145</td></tr><tr><td>T9</td><td>Hammers1man</td><td>+1</td><td>145</td></tr><tr><td>T11</td><td>BfcTino</td><td>+5</td><td>149</td></tr><tr><td>T11</td><td>Polekatt</td><td>+5</td><td>149</td></tr><tr><td>13</td><td>Zdubz</td><td>+999</td><td>0</td></tr></tbody></table></div>"
+  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Heartbreak Invitational (7-15 March 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr><tr><td>1</td><td>Horusphoenix</td><td>-12</td><td>132</td></tr><tr><td>2</td><td>x3offthetee</td><td>-8</td><td>136</td></tr><tr><td>3</td><td>Hoplinkz</td><td>-7</td><td>137</td></tr><tr><td>4</td><td>Geordieboy85</td><td>-6</td><td>138</td></tr><tr><td>T4</td><td>WingisBack</td><td>-6</td><td>138</td></tr><tr><td>6</td><td>Tenbobnote</td><td>-4</td><td>140</td></tr><tr><td>7</td><td>Keep_of_Kalessin</td><td>-2</td><td>142</td></tr><tr><td>T7</td><td>Colly45x</td><td>-2</td><td>142</td></tr><tr><td>9</td><td>Polekatt</td><td>+16</td><td>160</td></tr></table></div>"
 }

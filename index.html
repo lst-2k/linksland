@@ -24,7 +24,6 @@
         .sig-tag { background: var(--sig-purple); color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         h3 { color: var(--golf-green); font-size: 1.2em; padding: 12px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; }
         .history-header { background: #fff; padding: 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--golf-green); }
-        .history-header:hover { background: #f1f1f1; }
         .history-header::after { content: '\f0d7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
         .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 15px; }
     </style>
@@ -72,7 +71,7 @@
             renderLeaderboard(data);
             renderStandings(data.season); 
             renderHistory(data.history);
-        } catch (e) { console.error(e); }
+        } catch (e) { console.error("Error loading data.json:", e); }
     }
 
     function getPlatformIcon(p) {
