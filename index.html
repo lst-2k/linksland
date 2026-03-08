@@ -165,41 +165,61 @@
     }
 
     // 3. SEASON STANDINGS RENDER
-    function renderStandings(seasonData) {
-        const sBody = document.getElementById('seasonBody');
-        if (!sBody || !seasonData) return;
-        sBody.innerHTML = '';
+// 3. SEASON STANDINGS RENDER (With Events Played)
+function renderStandings(seasonData) {
+    const sBody = document.getElementById('seasonBody');
+    if (!sBody || !seasonData) return;
+    sBody.innerHTML = '';
 
-        const sortedStandings = Object.entries(seasonData)
-            .map(([name, info]) => ({ name, ...info }))
-            .sort((a, b) => b.points - a.points);
+    const sortedStandings = Object.entries(seasonData)
+        .map(([name, info]) => ({ name, ...info }))
+        .sort((a, b) => b.points - a.points);
 
-        sortedStandings.forEach((player, index) => {
-            sBody.innerHTML += `
-                <tr>
-                    <td style="font-weight:bold;">${index + 1}</td>
-                    <td class="player-col">${getPlatformIcon(player.console)} ${player.name}</td>
-                    <td style="color:var(--golf-green); font-weight:bold;">${player.points}</td>
-                </tr>`;
-        });
+    sortedStandings.forEach((player, index) => {
+        // Fallback to 0 if eventsPlayed isn't in your JSON yet
+        const eventsCount = player.eventsPlayed || "-"; 
+        
+        sBody.innerHTML += `
+            <tr>
+                <td style="font-weight:bold;">${index + 1}</td>
+                <td class="player-col">${getPlatformIcon(player.console)} ${player.name}</td>
+                <td>${eventsCount}</td>
+                <td style="color:var(--golf-green); font-weight:bold;">${player.points}</td>
+            </tr>`;
+    });
+}
+
+// 4. HISTORY RENDER (Clean Display & Dropdown)
+function renderHistory(historyHTML) {
+    const hDiv = document.getElementById('historyContainer');
+    if (hDiv && historyHTML) {
+        // Replace any +999 (from players who didn't play) with --
+        let cleanHistory = historyHTML.replace(/>\+999</g, '>--<');
+        
+        hDiv.innerHTML = `
+            <div style="margin-top:30px;">
+                <h3 style="background:#2c3e50; color:white;">Tournament History</h3>
+                ${cleanHistory}
+            </div>`;
     }
+}
 
-    // 4. HISTORY RENDER
-    function renderHistory(historyHTML) {
-        const hDiv = document.getElementById('historyContainer');
-        if (hDiv && historyHTML) {
-            hDiv.innerHTML = '<h3>Tournament History</h3>' + historyHTML;
-        }
+// 5. ACCORDION TOGGLE LOGIC
+function toggleHistory(header) {
+    const content = header.nextElementSibling;
+    // Close others if you want only one open at a time
+    const allContent = document.querySelectorAll('.history-content');
+    allContent.forEach(c => {
+        if (c !== content) c.style.display = 'none';
+    });
+
+    // Toggle current
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
     }
-
-    // This must match the function name above!
-    window.onload = loadLeaderboard; 
-
-    // Helper for History Accordion
-    function toggleHistory(header) {
-        const content = header.nextElementSibling;
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-    }
+}
 </script>
 </body>
 </html>
