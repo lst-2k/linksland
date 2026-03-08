@@ -71,19 +71,28 @@
 </div>
 
 <script>
+    // 1. DATA LOADING
     async function loadLeaderboard() {
-    try {
-        const response = await fetch('data.json');
-        const data = await response.json();
-        
-        // Render all three sections
-        renderLeaderboard(data);
-        renderStandings(data.season); 
-        renderHistory(data.history);
-    } catch (e) {
-        console.error("Error loading data.json:", e);
+        try {
+            const response = await fetch('data.json');
+            if (!response.ok) throw new Error("Could not find data.json");
+            const data = await response.json();
+            
+            // Set Header Info
+            document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
+            if(data.isSig) {
+                document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE EVENT</span>';
+            }
+
+            // Render all sections
+            renderLeaderboard(data);
+            renderStandings(data.season); 
+            renderHistory(data.history);
+        } catch (e) {
+            console.error("Error loading data.json:", e);
+            document.getElementById('venueName').innerText = "❌ Error Loading Data";
+        }
     }
-}
 
     function getPlatformIcon(p) {
         const c = (p || "").toLowerCase();
@@ -102,76 +111,95 @@
         return { total: base + bonus, bonusOnly: bonus };
     }
 
-function renderLeaderboard(data) {
-    const lBody = document.getElementById('liveBody');
-    if(!lBody) return;
-    lBody.innerHTML = '';
-    const par = parseInt(data.par) || 72;
-    
-    // Sort by To Par
-    let players = data.players.map(p => {
-        const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
-        const total = s.reduce((a,b) => a+b, 0);
-        return { ...p, total, toPar: s.length > 0 ? total - (s.length * par) : 999, active: s.length };
-    }).sort((a,b) => a.toPar - b.toPar);
+    // 2. LIVE TOURNAMENT RENDER
+    function renderLeaderboard(data) {
+        const lBody = document.getElementById('liveBody');
+        if(!lBody) return;
+        lBody.innerHTML = '';
+        const par = parseInt(data.par) || 72;
+        
+        // Sort players by score
+        let players = data.players.map(p => {
+            const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
+            const total = s.reduce((a,b) => a+b, 0);
+            return { ...p, total, toPar: s.length > 0 ? total - (s.length * par) : 999, active: s.length };
+        }).sort((a,b) => a.toPar - b.toPar);
 
-    players.forEach((p, i) => {
-        if (p.active === 0) return;
+        players.forEach((p, i) => {
+            if (p.active === 0) return;
 
-        let displayRank = i + 1;
-        let isTied = false;
-        const scoreAbove = i > 0 ? players[i-1].toPar : null;
-        const scoreBelow = i < players.length - 1 ? players[i+1].toPar : null;
+            // Tie Logic
+            let displayRank = i + 1;
+            let isTied = false;
+            const scoreAbove = i > 0 ? players[i-1].toPar : null;
+            const scoreBelow = i < players.length - 1 ? players[i+1].toPar : null;
 
-        if (p.toPar === scoreAbove || p.toPar === scoreBelow) {
-            isTied = true;
-            let firstOccurence = i;
-            while (firstOccurence > 0 && players[firstOccurence - 1].toPar === p.toPar) firstOccurence--;
-            displayRank = firstOccurence + 1;
-        }
+            if (p.toPar === scoreAbove || p.toPar === scoreBelow) {
+                isTied = true;
+                let firstOccurence = i;
+                while (firstOccurence > 0 && players[firstOccurence - 1].toPar === p.toPar) firstOccurence--;
+                displayRank = firstOccurence + 1;
+            }
 
-        const rankLabel = isTied ? `T${displayRank}` : displayRank;
-        const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
+            const rankLabel = isTied ? `T${displayRank}` : displayRank;
+            const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
 
-        lBody.innerHTML += `
-            <tr>
-                <td style="font-weight:bold;">${rankLabel}</td>
-                <td>${p.name}</td>
-                <td class="${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
-                <td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td>
-                <td>${p.total}</td>
-            </tr>`;
-    });
-}
+            // Calculate Points & Bonuses
+            const ptsData = calculatePts(displayRank, data.isSig, (parseInt(p.birdies) > 0), p.isLow);
+            let bDisp = "-";
+            if (ptsData.bonusOnly > 0) {
+                bDisp = `+${ptsData.bonusOnly} ${(parseInt(p.birdies)>0)?'🐦':''} ${(p.isLow)?'📉':''}`;
+            }
 
-function renderStandings(seasonData) {
-    const sBody = document.getElementById('seasonBody');
-    if (!sBody || !seasonData) return;
-    sBody.innerHTML = '';
-
-    // Convert object to array and sort by points descending
-    const sortedStandings = Object.entries(seasonData)
-        .map(([name, info]) => ({ name, ...info }))
-        .sort((a, b) => b.points - a.points);
-
-    sortedStandings.forEach((player, index) => {
-        sBody.innerHTML += `
-            <tr>
-                <td style="font-weight:bold;">${index + 1}</td>
-                <td>${player.name}</td>
-                <td style="color:var(--golf-green); font-weight:bold;">${player.points}</td>
-            </tr>`;
-    });
-}
-
-// 4. HISTORY RENDER
-function renderHistory(historyHTML) {
-    const hDiv = document.getElementById('historyContainer');
-    if (hDiv && historyHTML) {
-        hDiv.innerHTML = historyHTML;
+            lBody.innerHTML += `
+                <tr>
+                    <td class="w-shrink" style="font-weight:bold;">${rankLabel}</td>
+                    <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
+                    <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
+                    <td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td>
+                    <td>${p.total}</td>
+                    <td style="color:#0277bd; font-weight:bold;">${bDisp}</td>
+                    <td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td>
+                </tr>`;
+        });
     }
-}
-    window.onload = fetchData;
+
+    // 3. SEASON STANDINGS RENDER
+    function renderStandings(seasonData) {
+        const sBody = document.getElementById('seasonBody');
+        if (!sBody || !seasonData) return;
+        sBody.innerHTML = '';
+
+        const sortedStandings = Object.entries(seasonData)
+            .map(([name, info]) => ({ name, ...info }))
+            .sort((a, b) => b.points - a.points);
+
+        sortedStandings.forEach((player, index) => {
+            sBody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold;">${index + 1}</td>
+                    <td class="player-col">${getPlatformIcon(player.console)} ${player.name}</td>
+                    <td style="color:var(--golf-green); font-weight:bold;">${player.points}</td>
+                </tr>`;
+        });
+    }
+
+    // 4. HISTORY RENDER
+    function renderHistory(historyHTML) {
+        const hDiv = document.getElementById('historyContainer');
+        if (hDiv && historyHTML) {
+            hDiv.innerHTML = '<h3>Tournament History</h3>' + historyHTML;
+        }
+    }
+
+    // This must match the function name above!
+    window.onload = loadLeaderboard; 
+
+    // Helper for History Accordion
+    function toggleHistory(header) {
+        const content = header.nextElementSibling;
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
 </script>
 </body>
 </html>
