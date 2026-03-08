@@ -10,20 +10,38 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-tint); padding: 0; color: #333; margin: 0; }
         .league-banner { background: white; text-align: center; border-bottom: 4px solid var(--golf-green); width: 100%; }
         .league-logo { width: 100%; height: auto; display: block; }
-        .main-content { width: 100%; margin: 0; padding: 0; }
-        .section-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; }
+        .main-content { width: 100%; max-width: 1000px; margin: auto; padding-bottom: 50px; }
         .scroller { width: 100%; overflow-x: auto; background: white; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        
         table { width: 100%; border-collapse: collapse; background: white; }
         th { background: #2c3e50; color: white; padding: 12px 8px; font-size: 11px; text-transform: uppercase; white-space: nowrap; }
         td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; }
-        .w-shrink { width: 1%; }
-        .player-col { text-align: left !important; padding-left: 10px; }
+        
+        .player-col { text-align: left !important; padding-left: 10px; font-weight: 500; }
         .fa-brands { font-size: 1.1em; vertical-align: middle; margin-right: 6px; width: 18px; text-align: center; }
         .fa-playstation { color: var(--ps-blue); } .fa-xbox { color: var(--xbox-green); } .fa-steam { color: var(--steam-blue); }
+        
         .to-par-cell { font-weight: 900; font-size: 1.1em; background: #fcfcfc; width: 60px; }
         .under-par { color: var(--under-red); }
-        .sig-tag { background: var(--sig-purple); color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
-        h3 { color: var(--golf-green); font-size: 1.2em; padding: 12px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; }
+        .sig-tag { background: #673ab7; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7em; }
+        
+        h2, h3 { color: #2c3e50; padding: 15px; margin: 0; background: #f9f9f9; }
+
+        /* History Dropdown Styling */
+        .history-header {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-top: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-header:hover { background: #f1f1f1; }
+        .history-header::after { content: '\f0d7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+        .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 10px; }
     </style>
 </head>
 <body>
@@ -31,8 +49,8 @@
 <header class="league-banner"><img src="logo.png" alt="Logo" class="league-logo" onerror="this.style.display='none'"></header>
 
 <div class="main-content">
-    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="venueName" style="margin:0; font-size: 1.4em;">⛳ Loading...</h2>
+    <div style="padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display:flex; justify-content:space-between; align-items:center;">
+        <h2 id="venueName" style="margin:0; background:none;">⛳ Loading...</h2>
         <div id="sigStatus"></div>
     </div>
 
@@ -41,56 +59,53 @@
         <table>
             <thead>
                 <tr>
-                    <th class="w-shrink">Pos</th>
+                    <th>Pos</th>
                     <th class="player-col">Player</th>
-                    <th class="w-shrink">To Par</th>
-                    <th class="w-shrink">R1</th><th class="w-shrink">R2</th><th class="w-shrink">R3</th><th class="w-shrink">R4</th>
-                    <th class="w-shrink">Total</th>
-                    <th class="w-shrink" style="background:#0277bd;">Bonus</th>
-                    <th class="w-shrink">Pts</th>
+                    <th>To Par</th>
+                    <th>R1</th><th>R2</th><th>R3</th><th>R4</th>
+                    <th>Total</th>
+                    <th style="background:#0277bd;">Bonus</th>
+                    <th>Pts</th>
                 </tr>
             </thead>
             <tbody id="liveBody"></tbody>
         </table>
     </div>
 
-		<h2>Season Standings</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Rank</th>
-					<th>Player</th>
-					<th>Total Points</th>
-				</tr>
-			</thead>
-			<tbody id="seasonBody">
-				</tbody>
-		</table>
+    <h3>Season Standings</h3>
+    <div class="scroller">
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th class="player-col">Player</th>
+                    <th>Played</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody id="seasonBody"></tbody>
+        </table>
     </div>
+
     <div id="historyContainer"></div>
 </div>
 
 <script>
-    // 1. DATA LOADING
     async function loadLeaderboard() {
         try {
             const response = await fetch('data.json');
-            if (!response.ok) throw new Error("Could not find data.json");
+            if (!response.ok) throw new Error("JSON file not found");
             const data = await response.json();
             
-            // Set Header Info
             document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
-            if(data.isSig) {
-                document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE EVENT</span>';
-            }
+            if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE EVENT</span>';
 
-            // Render all sections
             renderLeaderboard(data);
             renderStandings(data.season); 
             renderHistory(data.history);
         } catch (e) {
-            console.error("Error loading data.json:", e);
-            document.getElementById('venueName').innerText = "❌ Error Loading Data";
+            console.error(e);
+            document.getElementById('venueName').innerText = "❌ Error Loading data.json";
         }
     }
 
@@ -111,14 +126,11 @@
         return { total: base + bonus, bonusOnly: bonus };
     }
 
-    // 2. LIVE TOURNAMENT RENDER
     function renderLeaderboard(data) {
         const lBody = document.getElementById('liveBody');
-        if(!lBody) return;
         lBody.innerHTML = '';
         const par = parseInt(data.par) || 72;
         
-        // Sort players by score
         let players = data.players.map(p => {
             const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
             const total = s.reduce((a,b) => a+b, 0);
@@ -128,7 +140,6 @@
         players.forEach((p, i) => {
             if (p.active === 0) return;
 
-            // Tie Logic
             let displayRank = i + 1;
             let isTied = false;
             const scoreAbove = i > 0 ? players[i-1].toPar : null;
@@ -136,16 +147,15 @@
 
             if (p.toPar === scoreAbove || p.toPar === scoreBelow) {
                 isTied = true;
-                let firstOccurence = i;
-                while (firstOccurence > 0 && players[firstOccurence - 1].toPar === p.toPar) firstOccurence--;
-                displayRank = firstOccurence + 1;
+                let firstIdx = i;
+                while (firstIdx > 0 && players[firstIdx - 1].toPar === p.toPar) firstIdx--;
+                displayRank = firstIdx + 1;
             }
 
             const rankLabel = isTied ? `T${displayRank}` : displayRank;
             const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-
-            // Calculate Points & Bonuses
             const ptsData = calculatePts(displayRank, data.isSig, (parseInt(p.birdies) > 0), p.isLow);
+            
             let bDisp = "-";
             if (ptsData.bonusOnly > 0) {
                 bDisp = `+${ptsData.bonusOnly} ${(parseInt(p.birdies)>0)?'🐦':''} ${(p.isLow)?'📉':''}`;
@@ -153,7 +163,7 @@
 
             lBody.innerHTML += `
                 <tr>
-                    <td class="w-shrink" style="font-weight:bold;">${rankLabel}</td>
+                    <td style="font-weight:bold; color:#888;">${rankLabel}</td>
                     <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
                     <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
                     <td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td>
@@ -164,62 +174,43 @@
         });
     }
 
-    // 3. SEASON STANDINGS RENDER
-// 3. SEASON STANDINGS RENDER (With Events Played)
-function renderStandings(seasonData) {
-    const sBody = document.getElementById('seasonBody');
-    if (!sBody || !seasonData) return;
-    sBody.innerHTML = '';
+    function renderStandings(seasonData) {
+        const sBody = document.getElementById('seasonBody');
+        if (!sBody || !seasonData) return;
+        sBody.innerHTML = '';
 
-    const sortedStandings = Object.entries(seasonData)
-        .map(([name, info]) => ({ name, ...info }))
-        .sort((a, b) => b.points - a.points);
+        const sorted = Object.entries(seasonData)
+            .map(([name, info]) => ({ name, ...info }))
+            .sort((a, b) => b.points - a.points);
 
-    sortedStandings.forEach((player, index) => {
-        // Fallback to 0 if eventsPlayed isn't in your JSON yet
-        const eventsCount = player.eventsPlayed || "-"; 
-        
-        sBody.innerHTML += `
-            <tr>
-                <td style="font-weight:bold;">${index + 1}</td>
-                <td class="player-col">${getPlatformIcon(player.console)} ${player.name}</td>
-                <td>${eventsCount}</td>
-                <td style="color:var(--golf-green); font-weight:bold;">${player.points}</td>
-            </tr>`;
-    });
-}
-
-// 4. HISTORY RENDER (Clean Display & Dropdown)
-function renderHistory(historyHTML) {
-    const hDiv = document.getElementById('historyContainer');
-    if (hDiv && historyHTML) {
-        // Replace any +999 (from players who didn't play) with --
-        let cleanHistory = historyHTML.replace(/>\+999</g, '>--<');
-        
-        hDiv.innerHTML = `
-            <div style="margin-top:30px;">
-                <h3 style="background:#2c3e50; color:white;">Tournament History</h3>
-                ${cleanHistory}
-            </div>`;
+        sorted.forEach((p, idx) => {
+            sBody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold;">${idx + 1}</td>
+                    <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
+                    <td>${p.eventsPlayed || 0}</td>
+                    <td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
+                </tr>`;
+        });
     }
-}
 
-// 5. ACCORDION TOGGLE LOGIC
-function toggleHistory(header) {
-    const content = header.nextElementSibling;
-    // Close others if you want only one open at a time
-    const allContent = document.querySelectorAll('.history-content');
-    allContent.forEach(c => {
-        if (c !== content) c.style.display = 'none';
-    });
-
-    // Toggle current
-    if (content.style.display === "block") {
-        content.style.display = "none";
-    } else {
-        content.style.display = "block";
+    function renderHistory(historyHTML) {
+        const hDiv = document.getElementById('historyContainer');
+        if (hDiv && historyHTML) {
+            // Clean +999 and wrap in accordion structure
+            let cleanHistory = historyHTML.replace(/>\+999</g, '>--<');
+            hDiv.innerHTML = `<h3>Weekly History</h3>` + cleanHistory;
+        }
     }
-}
+
+    function toggleHistory(header) {
+        const content = header.nextElementSibling;
+        const isVisible = content.style.display === "block";
+        document.querySelectorAll('.history-content').forEach(c => c.style.display = "none");
+        content.style.display = isVisible ? "none" : "block";
+    }
+
+    window.onload = loadLeaderboard;
 </script>
 </body>
 </html>
