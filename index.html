@@ -11,7 +11,7 @@
         .league-banner { background: white; text-align: center; border-bottom: 4px solid var(--golf-green); width: 100%; }
         .league-logo { width: 100%; height: auto; display: block; }
         .main-content { width: 100%; max-width: 1000px; margin: auto; padding-bottom: 50px; }
-        .section-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; }
+        .section-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
         .scroller { width: 100%; overflow-x: auto; background: white; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; background: white; }
         th { background: #2c3e50; color: white; padding: 12px 8px; font-size: 11px; text-transform: uppercase; white-space: nowrap; }
@@ -23,12 +23,10 @@
         .under-par { color: var(--under-red); }
         .sig-tag { background: var(--sig-purple); color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         h3 { color: var(--golf-green); font-size: 1.2em; padding: 12px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; }
-        
-        /* History Dropdown Styles */
-        .history-header { background: #fff; padding: 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .history-header { background: #fff; padding: 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--golf-green); }
         .history-header:hover { background: #f1f1f1; }
         .history-header::after { content: '\f0d7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
-        .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 10px; }
+        .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 15px; }
     </style>
 </head>
 <body>
@@ -36,7 +34,7 @@
 <header class="league-banner"><img src="logo.png" alt="Logo" class="league-logo" onerror="this.style.display='none'"></header>
 
 <div class="main-content">
-    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="section-header">
         <h2 id="venueName" style="margin:0; font-size: 1.4em;">⛳ Loading...</h2>
         <div id="sigStatus"></div>
     </div>
@@ -45,15 +43,7 @@
     <div class="scroller">
         <table>
             <thead>
-                <tr>
-                    <th>Pos</th>
-                    <th class="player-col">Player</th>
-                    <th>To Par</th>
-                    <th>R1</th><th>R2</th><th>R3</th><th>R4</th>
-                    <th>Total</th>
-                    <th style="background:#0277bd;">Bonus</th>
-                    <th>Pts</th>
-                </tr>
+                <tr><th>Pos</th><th class="player-col">Player</th><th>To Par</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th><th style="background:#0277bd;">Bonus</th><th>Pts</th></tr>
             </thead>
             <tbody id="liveBody"></tbody>
         </table>
@@ -63,12 +53,7 @@
     <div class="scroller">
         <table>
             <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th class="player-col">Player</th>
-                    <th>Played</th>
-                    <th>Total Points</th>
-                </tr>
+                <tr><th>Rank</th><th class="player-col">Player</th><th>Played</th><th>Total Points</th></tr>
             </thead>
             <tbody id="seasonBody"></tbody>
         </table>
@@ -82,17 +67,12 @@
         try {
             const response = await fetch('data.json');
             const data = await response.json();
-            
-            // Set Header Details
             document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
             if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE EVENT</span>';
-            
             renderLeaderboard(data);
             renderStandings(data.season); 
             renderHistory(data.history);
-        } catch (e) {
-            console.error("Error loading data.json:", e);
-        }
+        } catch (e) { console.error(e); }
     }
 
     function getPlatformIcon(p) {
@@ -112,80 +92,51 @@
 
     function renderLeaderboard(data) {
         const lBody = document.getElementById('liveBody');
-        if(!lBody) return;
         lBody.innerHTML = '';
         const par = parseInt(data.par) || 72;
-        
         let players = data.players.map(p => {
-            const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
+            const s = [p.r1, p.r2, p.r3, p.r4].map(v => parseInt(v)||0).filter(v => v > 0);
             const total = s.reduce((a,b) => a+b, 0);
             return { ...p, total, toPar: s.length > 0 ? total - (s.length * par) : 999, active: s.length };
         }).sort((a,b) => a.toPar - b.toPar);
 
         players.forEach((p, i) => {
             if (p.active === 0) return;
-
             let firstIdx = i;
             while (firstIdx > 0 && players[firstIdx - 1].toPar === p.toPar) firstIdx--;
             const isTied = (i > 0 && players[i-1].toPar === p.toPar) || (i < players.length-1 && players[i+1].toPar === p.toPar);
             const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
-            
             const ptsData = calculatePts(firstIdx + 1, data.isSig, (parseInt(p.birdies) > 0), p.isLow);
             const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-
-            lBody.innerHTML += `
-                <tr>
-                    <td style="font-weight:bold; color:#888;">${rankLabel}</td>
-                    <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
-                    <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
-                    <td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td>
-                    <td>${p.total}</td>
-                    <td style="color:#0277bd; font-weight:bold;">+${ptsData.bonusOnly}</td>
-                    <td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td>
-                </tr>`;
+            lBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold;">+${ptsData.bonusOnly}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;
         });
     }
 
     function renderStandings(seasonData) {
         const sBody = document.getElementById('seasonBody');
         if (!sBody || !seasonData) return;
+        const sorted = Object.entries(seasonData).map(([name, info]) => ({ name, ...info })).sort((a, b) => b.points - a.points);
         sBody.innerHTML = '';
-
-        const sorted = Object.entries(seasonData)
-            .map(([name, info]) => ({ name, ...info }))
-            .sort((a, b) => b.points - a.points);
-
         sorted.forEach((p, i) => {
             let firstIdx = i;
             while (firstIdx > 0 && sorted[firstIdx - 1].points === p.points) firstIdx--;
             const isTied = (i > 0 && sorted[i-1].points === p.points) || (i < sorted.length-1 && sorted[i+1].points === p.points);
             const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
-
-            sBody.innerHTML += `
-                <tr>
-                    <td style="font-weight:bold; color:#888;">${rankLabel}</td>
-                    <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
-                    <td>${p.eventsPlayed || 0}</td>
-                    <td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
-                </tr>`;
+            sBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td>${p.eventsPlayed || 0}</td><td style="color:var(--golf-green); font-weight:bold;">${p.points}</td></tr>`;
         });
     }
 
     function renderHistory(historyHTML) {
         const hDiv = document.getElementById('historyContainer');
-        if (hDiv && historyHTML) {
-            hDiv.innerHTML = `<h3>Weekly History</h3>` + historyHTML.replace(/>\+999</g, '>--<');
-        }
+        if (hDiv && historyHTML) { hDiv.innerHTML = `<h3>Weekly History</h3>` + historyHTML.replace(/>\+999</g, '>--<'); }
     }
 
-    // This handles the weekly dropdown clicks
     function toggleHistory(header) {
         const content = header.nextElementSibling;
         const isVisible = content.style.display === "block";
         document.querySelectorAll('.history-content').forEach(c => c.style.display = "none");
         content.style.display = isVisible ? "none" : "block";
     }
-
     window.onload = loadLeaderboard;
 </script>
 </body>
