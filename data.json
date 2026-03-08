@@ -1,13 +1,33 @@
 {
-  "venue": "Royal Porthcawl",
-  "date": "12-19 March 2026",
-  "par": "72",
-  "isSig": true,
+  "venue": "Royal Dublin",
+  "date": "20-27 March 2026",
+  "par": 72,
+  "isSig": false,
   "players": [
     {
       "name": "Geordieboy85",
       "console": "PS",
-      "r1": "72",
+      "r1": "66",
+      "r2": "68",
+      "r3": "",
+      "r4": "",
+      "birdies": "7",
+      "isLow": true
+    },
+    {
+      "name": "Hopz",
+      "console": "PS",
+      "r1": "68",
+      "r2": "70",
+      "r3": "",
+      "r4": "",
+      "birdies": "5",
+      "isLow": false
+    },
+    {
+      "name": "x3offthetee",
+      "console": "Xbox",
+      "r1": "69",
       "r2": "69",
       "r3": "",
       "r4": "",
@@ -15,36 +35,33 @@
       "isLow": false
     },
     {
-      "name": "Hopz",
-      "console": "PS",
-      "r1": "69",
-      "r2": "72",
-      "r3": "",
-      "r4": "",
-      "birdies": "6",
-      "isLow": false
-    },
-    {
-      "name": "x3offthetee",
-      "console": "Xbox",
-      "r1": "68",
-      "r2": "74",
-      "r3": "",
-      "r4": "",
-      "birdies": "6",
-      "isLow": true
-    },
-    {
       "name": "Mr Longpole",
       "console": "PS",
-      "r1": "71",
-      "r2": "72",
+      "r1": "69",
+      "r2": "69",
       "r3": "",
       "r4": "",
       "birdies": "",
       "isLow": false
     }
   ],
-  "season": {},
-  "history": ""
+  "season": {
+    "Geordieboy85": {
+      "points": 270,
+      "console": "PS"
+    },
+    "Hopz": {
+      "points": 210,
+      "console": "PS"
+    },
+    "x3offthetee": {
+      "points": 150,
+      "console": "Xbox"
+    },
+    "Mr Longpole": {
+      "points": 100,
+      "console": "PS"
+    }
+  },
+  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Royal Dublin - 20-27 March 2026</div><div class=\"history-content\">...</div>"
 }
