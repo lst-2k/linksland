@@ -90,37 +90,65 @@
         return { total: base + bonus, bonusOnly: bonus };
     }
 
-    function renderLeaderboard(data) {
-        document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
-        document.getElementById('sigStatus').innerHTML = data.isSig ? '<span class="sig-tag" style="background:#673ab7; color:white; padding:5px 10px; border-radius:4px;">SIGNATURE EVENT</span>' : '';
-        const par = parseInt(data.par) || 72;
-        
-        let players = data.players.map(p => {
-            const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
-            const total = s.reduce((a,b) => a+b, 0);
-            return { ...p, total, toPar: s.length > 0 ? total - (s.length * par) : 999, active: s.length };
-        }).sort((a,b) => a.toPar - b.toPar);
+ function renderLeaderboard(data) {
+    document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
+    const lBody = document.getElementById('liveBody');
+    lBody.innerHTML = '';
+    const par = parseInt(data.par) || 72;
+    
+    // 1. Sort Players by score
+    let players = data.players.map(p => {
+        const s = [parseInt(p.r1)||0, parseInt(p.r2)||0, parseInt(p.r3)||0, parseInt(p.r4)||0].filter(v => v > 0);
+        const total = s.reduce((a,b) => a+b, 0);
+        return { ...p, total, toPar: s.length > 0 ? total - (s.length * par) : 999, active: s.length };
+    }).sort((a,b) => a.toPar - b.toPar);
 
-        const lBody = document.getElementById('liveBody'); lBody.innerHTML = '';
-        players.forEach((p, i) => {
-            if (p.active === 0) return;
-            const ptsData = calculatePts(i+1, data.isSig, (parseInt(p.birdies)>0), p.isLow);
-            let bDisp = "-";
-            if (ptsData.bonusOnly > 0) {
-                bDisp = `+${ptsData.bonusOnly} ${(parseInt(p.birdies)>0)?'🐦':''} ${(p.isLow)?'📉':''}`;
+    // 2. Apply Tie Logic
+    players.forEach((p, i) => {
+        if (p.active === 0) return;
+
+        // Determine Rank and Tie Status
+        let displayRank = i + 1;
+        let isTied = false;
+
+        // Check if player has same score as person above OR person below
+        const scoreAbove = i > 0 ? players[i-1].toPar : null;
+        const scoreBelow = i < players.length - 1 ? players[i+1].toPar : null;
+
+        if (p.toPar === scoreAbove || p.toPar === scoreBelow) {
+            isTied = true;
+            // Find the first occurrence of this score to get the "Top" rank of the tie
+            let firstOccurence = i;
+            while (firstOccurence > 0 && players[firstOccurence - 1].toPar === p.toPar) {
+                firstOccurence--;
             }
-            lBody.innerHTML += `<tr>
-                <td class="w-shrink" style="font-weight:bold; color:#888;">${i+1}</td>
+            displayRank = firstOccurence + 1;
+        }
+
+        const rankLabel = isTied ? `T${displayRank}` : displayRank;
+        
+        // 3. Calculate Points based on the 'base' rank (Tied players get same points)
+        const ptsData = calculatePts(displayRank, data.isSig, (parseInt(p.birdies)>0), p.isLow);
+
+        // 4. Formatting
+        const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
+        let bDisp = "-";
+        if (ptsData.bonusOnly > 0) {
+            bDisp = `+${ptsData.bonusOnly} ${(parseInt(p.birdies)>0)?'🐦':''} ${(p.isLow)?'📉':''}`;
+        }
+
+        lBody.innerHTML += `
+            <tr>
+                <td class="w-shrink" style="font-weight:bold; color:#888;">${rankLabel}</td>
                 <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
-                <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar)}</td>
+                <td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td>
                 <td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td>
                 <td class="w-shrink" style="font-weight:bold;">${p.total}</td>
                 <td class="w-shrink" style="color:#0277bd; font-weight:bold;">${bDisp}</td>
                 <td class="w-shrink" style="color:var(--golf-green); font-weight:bold; background:#f0f7f0;">${ptsData.total}</td>
             </tr>`;
-        });
-        // Season render logic here... (omitted for brevity, matches your previous working standings)
-    }
+    });
+}
     window.onload = fetchData;
 </script>
 </body>
