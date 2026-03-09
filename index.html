@@ -81,7 +81,7 @@
             const data = await response.json();
             document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'}`;
             document.getElementById('eventDateLabel').innerText = data.date || '';
-            if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE</span>';
+            if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 Major</span>';
             renderLeaderboard(data);
             renderStandings(data.season); 
             renderHistory(data.history);
