@@ -6,17 +6,23 @@
     <title>Live Leaderboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root { --ps-blue: #00439C; --xbox-green: #107C10; --steam-blue: #171D25; --golf-green: #2e7d32; --under-red: #d32f2f; --bg-tint: #eceff1; --sig-purple: #673ab7; }
+        :root { --ps-blue: #00439C; --xbox-green: #107C10; --steam-blue: #171D25; --golf-green: #2e7d32; --under-red: #d32f2f; --bg-tint: #eceff1; --major-purple: #4527a0; --major-gold: #ffc107; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-tint); padding: 0; color: #333; margin: 0; font-size: 14px; }
         .league-banner { background: white; text-align: center; border-bottom: 4px solid var(--golf-green); width: 100%; }
         .league-logo { width: 100%; height: auto; display: block; }
         .main-content { width: 100%; max-width: 1000px; margin: auto; padding-bottom: 50px; }
         
-        /* Updated Venue/Date Header */
-        .section-header { padding: 12px 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        /* Dynamic Header Styles */
+        .section-header { padding: 12px 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .section-header.is-major { background: var(--major-purple); color: white; border-bottom: 4px solid var(--major-gold); }
+        
         .header-text-group { display: flex; flex-direction: column; }
-        #venueName { margin: 0; font-size: 1.2em; color: #222; font-weight: 800; }
+        #venueName { margin: 0; font-size: 1.25em; font-weight: 800; }
         #eventDateLabel { margin: 0; font-size: 0.85em; color: #666; font-weight: 500; }
+        .is-major #eventDateLabel { color: #d1c4e9; } /* Lighter text for date on purple background */
+        
+        /* Contrasting Major Tag */
+        .major-tag { background: var(--major-gold); color: #222; padding: 4px 12px; border-radius: 4px; font-size: 0.75em; font-weight: 900; letter-spacing: 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
         .scroller { width: 100%; overflow-x: auto; background: white; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; background: white; }
@@ -29,7 +35,6 @@
         
         .to-par-cell { font-weight: 900; font-size: 1em; background: #fcfcfc; width: 55px; }
         .under-par { color: var(--under-red); }
-        .sig-tag { background: var(--sig-purple); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.7em; font-weight: bold; }
         
         h3 { color: var(--golf-green); font-size: 1.05em; padding: 10px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px; }
         
@@ -43,7 +48,7 @@
 <header class="league-banner"><img src="logo.png" alt="Logo" class="league-logo" onerror="this.style.display='none'"></header>
 
 <div class="main-content">
-    <div class="section-header">
+    <div id="headerBar" class="section-header">
         <div class="header-text-group">
             <h2 id="venueName">⛳ Loading...</h2>
             <p id="eventDateLabel"></p>
@@ -79,9 +84,19 @@
         try {
             const response = await fetch('data.json');
             const data = await response.json();
+            
+            const headerBar = document.getElementById('headerBar');
             document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'}`;
             document.getElementById('eventDateLabel').innerText = data.date || '';
-            if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 Major</span>';
+            
+            if(data.isSig) {
+                headerBar.classList.add('is-major');
+                document.getElementById('sigStatus').innerHTML = '<span class="major-tag">🏆 MAJOR</span>';
+            } else {
+                headerBar.classList.remove('is-major');
+                document.getElementById('sigStatus').innerHTML = '';
+            }
+
             renderLeaderboard(data);
             renderStandings(data.season); 
             renderHistory(data.history);
