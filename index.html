@@ -7,25 +7,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root { --ps-blue: #00439C; --xbox-green: #107C10; --steam-blue: #171D25; --golf-green: #2e7d32; --under-red: #d32f2f; --bg-tint: #eceff1; --sig-purple: #673ab7; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-tint); padding: 0; color: #333; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-tint); padding: 0; color: #333; margin: 0; font-size: 14px; }
         .league-banner { background: white; text-align: center; border-bottom: 4px solid var(--golf-green); width: 100%; }
         .league-logo { width: 100%; height: auto; display: block; }
         .main-content { width: 100%; max-width: 1000px; margin: auto; padding-bottom: 50px; }
-        .section-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Updated Venue/Date Header */
+        .section-header { padding: 12px 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .header-text-group { display: flex; flex-direction: column; }
+        #venueName { margin: 0; font-size: 1.2em; color: #222; font-weight: 800; }
+        #eventDateLabel { margin: 0; font-size: 0.85em; color: #666; font-weight: 500; }
+        
         .scroller { width: 100%; overflow-x: auto; background: white; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; background: white; }
-        th { background: #2c3e50; color: white; padding: 12px 8px; font-size: 11px; text-transform: uppercase; white-space: nowrap; }
-        td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; }
+        th { background: #2c3e50; color: white; padding: 10px 6px; font-size: 10px; text-transform: uppercase; white-space: nowrap; }
+        td { padding: 10px 6px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; font-size: 13px; }
+        
         .player-col, .history-content td:nth-child(2) { text-align: left !important; padding-left: 15px; font-weight: 500; }
-        .fa-brands { font-size: 1.1em; vertical-align: middle; margin-right: 6px; width: 18px; text-align: center; }
+        .fa-brands { font-size: 1em; vertical-align: middle; margin-right: 6px; width: 18px; text-align: center; }
         .fa-playstation { color: var(--ps-blue); } .fa-xbox { color: var(--xbox-green); } .fa-steam { color: var(--steam-blue); }
-        .to-par-cell { font-weight: 900; font-size: 1.1em; background: #fcfcfc; width: 60px; }
+        
+        .to-par-cell { font-weight: 900; font-size: 1em; background: #fcfcfc; width: 55px; }
         .under-par { color: var(--under-red); }
-        .sig-tag { background: var(--sig-purple); color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
-        h3 { color: var(--golf-green); font-size: 1.2em; padding: 12px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; }
-        .history-header { background: #fff; padding: 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--golf-green); }
+        .sig-tag { background: var(--sig-purple); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.7em; font-weight: bold; }
+        
+        h3 { color: var(--golf-green); font-size: 1.05em; padding: 10px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .history-header { background: #fff; padding: 12px 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--golf-green); font-size: 0.9em; }
         .history-header::after { content: '\f0d7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
-        .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 15px; }
+        .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 10px; }
     </style>
 </head>
 <body>
@@ -34,11 +44,14 @@
 
 <div class="main-content">
     <div class="section-header">
-        <h2 id="venueName" style="margin:0; font-size: 1.4em;">⛳ Loading...</h2>
+        <div class="header-text-group">
+            <h2 id="venueName">⛳ Loading...</h2>
+            <p id="eventDateLabel"></p>
+        </div>
         <div id="sigStatus"></div>
     </div>
 
-    <h3>Current Tournament Leaderboard</h3>
+    <h3>Current Tournament</h3>
     <div class="scroller">
         <table>
             <thead>
@@ -66,8 +79,9 @@
         try {
             const response = await fetch('data.json');
             const data = await response.json();
-            document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'} (${data.date || ''})`;
-            if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE EVENT</span>';
+            document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'}`;
+            document.getElementById('eventDateLabel').innerText = data.date || '';
+            if(data.isSig) document.getElementById('sigStatus').innerHTML = '<span class="sig-tag">🏆 SIGNATURE</span>';
             renderLeaderboard(data);
             renderStandings(data.season); 
             renderHistory(data.history);
@@ -112,14 +126,11 @@
             if (p.active === 0) return;
             let firstIdx = i;
             while (firstIdx > 0 && players[firstIdx - 1].toPar === p.toPar) firstIdx--;
-            
             const isTied = (i > 0 && players[i-1].toPar === p.toPar) || (i < players.length-1 && players[i+1].toPar === p.toPar);
             const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
-            
             const ptsData = calculatePts(firstIdx + 1, data.isSig, (parseInt(p.birdies) > 0), p.isLow);
             const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-            
-            lBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold; font-size:0.9em;">${ptsData.bonusLabel}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;
+            lBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold; font-size:0.85em;">${ptsData.bonusLabel}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;
         });
     }
 
