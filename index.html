@@ -12,16 +12,14 @@
         .league-logo { width: 100%; height: auto; display: block; }
         .main-content { width: 100%; max-width: 1000px; margin: auto; padding-bottom: 50px; }
         
-        /* Dynamic Header Styles */
         .section-header { padding: 12px 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
         .section-header.is-major { background: var(--major-purple); color: white; border-bottom: 4px solid var(--major-gold); }
         
         .header-text-group { display: flex; flex-direction: column; }
         #venueName { margin: 0; font-size: 1.25em; font-weight: 800; }
         #eventDateLabel { margin: 0; font-size: 0.85em; color: #666; font-weight: 500; }
-        .is-major #eventDateLabel { color: #d1c4e9; } /* Lighter text for date on purple background */
+        .is-major #eventDateLabel { color: #d1c4e9; } 
         
-        /* Contrasting Major Tag */
         .major-tag { background: var(--major-gold); color: #222; padding: 4px 12px; border-radius: 4px; font-size: 0.75em; font-weight: 900; letter-spacing: 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
         .scroller { width: 100%; overflow-x: auto; background: white; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
@@ -32,13 +30,14 @@
         .player-col, .history-content td:nth-child(2) { text-align: left !important; padding-left: 15px; font-weight: 500; }
         .fa-brands { font-size: 1em; vertical-align: middle; margin-right: 6px; width: 18px; text-align: center; }
         .fa-playstation { color: var(--ps-blue); } .fa-xbox { color: var(--xbox-green); } .fa-steam { color: var(--steam-blue); }
-        
         .to-par-cell { font-weight: 900; font-size: 1em; background: #fcfcfc; width: 55px; }
         .under-par { color: var(--under-red); }
         
         h3 { color: var(--golf-green); font-size: 1.05em; padding: 10px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px; }
         
+        /* History Styling */
         .history-header { background: #fff; padding: 12px 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--golf-green); font-size: 0.9em; }
+        .history-header.major-border { border-left-color: var(--major-purple); } /* Changes green bar to purple */
         .history-header::after { content: '\f0d7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
         .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 10px; }
     </style>
@@ -115,15 +114,7 @@
         if (isSig) base *= 2;
         const bVal = isSig ? 20 : 10;
         let bonus = (hasBirds ? bVal : 0) + (hasLow ? bVal : 0);
-        
-        let bonusLabel = "-";
-        if(bonus > 0) {
-            bonusLabel = "";
-            if(hasBirds) bonusLabel += "🐦";
-            if(hasLow) bonusLabel += "🔥";
-            bonusLabel += `+${bonus}`;
-        }
-        
+        let bonusLabel = bonus > 0 ? (hasBirds?'🐦':'')+(hasLow?'🔥':'')+`+${bonus}` : "-";
         return { total: base + bonus, bonusLabel: bonusLabel };
     }
 
@@ -165,7 +156,20 @@
 
     function renderHistory(historyHTML) {
         const hDiv = document.getElementById('historyContainer');
-        if (hDiv && historyHTML) { hDiv.innerHTML = `<h3>Weekly History</h3>` + historyHTML.replace(/>\+999</g, '>--<'); }
+        if (hDiv && historyHTML) { 
+            // Create a temp element to parse the HTML string
+            let temp = document.createElement('div');
+            temp.innerHTML = historyHTML.replace(/>\+999</g, '>--<');
+            
+            // Loop through headers and check for Trophy emoji to apply purple border
+            temp.querySelectorAll('.history-header').forEach(header => {
+                if (header.innerText.includes('🏆')) {
+                    header.classList.add('major-border');
+                }
+            });
+            
+            hDiv.innerHTML = `<h3>Weekly History</h3>` + temp.innerHTML; 
+        }
     }
 
     function toggleHistory(header) {
