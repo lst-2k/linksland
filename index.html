@@ -114,7 +114,7 @@
         if (isSig) base *= 2;
         const bVal = isSig ? 20 : 10;
         let bonus = (hasBirds ? bVal : 0) + (hasLow ? bVal : 0);
-        let bonusLabel = bonus > 0 ? (hasBirds?'🐦':'')+(hasLow?'🔥':'')+`+${bonus}` : "-";
+        let bonusLabel = bonus > 0 ? (hasBirds?'🦅':'')+(hasLow?'🔥':'')+`+${bonus}` : "-";
         return { total: base + bonus, bonusLabel: bonusLabel };
     }
 
