@@ -1,48 +1,64 @@
 {
   "venue": "Nairn Scotland",
-  "date": "March 13th-20th 2026",
+  "date": "March 13-20 2026",
   "par": "72",
   "isSig": false,
   "players": [
     {
-      "name": "Horusphoenix",
-      "console": "Xbox",
-      "r1": "",
-      "r2": "",
-      "r3": "",
-      "r4": "",
-      "total": 0,
-      "birdies": "",
-      "isLow": false,
-      "toParVal": 999
-    },
-    {
       "name": "x3offthetee",
       "console": "Xbox",
-      "r1": "",
-      "r2": "",
+      "r1": "66",
+      "r2": "68",
       "r3": "",
       "r4": "",
-      "total": 0,
-      "birdies": "",
+      "total": 134,
+      "birdies": "8",
       "isLow": false,
-      "toParVal": 999
+      "toParVal": -10
     },
     {
       "name": "Colly45x",
       "console": "Xbox",
-      "r1": "",
-      "r2": "",
+      "r1": "67",
+      "r2": "70",
       "r3": "",
       "r4": "",
-      "total": 0,
+      "total": 137,
       "birdies": "",
       "isLow": false,
-      "toParVal": 999
+      "toParVal": -7
+    },
+    {
+      "name": "HorusPhoenix",
+      "console": "Xbox",
+      "r1": "69",
+      "r2": "72",
+      "r3": "",
+      "r4": "",
+      "total": 141,
+      "birdies": "",
+      "isLow": true,
+      "toParVal": -3
     }
   ],
   "backupSeason": {},
-  "backupHistory": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13th-20th 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr></table></div>",
-  "season": {},
-  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13th-20th 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr></table></div><div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13th-20th 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr></table></div>"
+  "backupHistory": "",
+  "season": {
+    "x3offthetee": {
+      "points": 210,
+      "console": "Xbox",
+      "eventsPlayed": 1
+    },
+    "Colly45x": {
+      "points": 175,
+      "console": "Xbox",
+      "eventsPlayed": 1
+    },
+    "HorusPhoenix": {
+      "points": 160,
+      "console": "Xbox",
+      "eventsPlayed": 1
+    }
+  },
+  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13-20 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr><tr><td>1</td><td>x3offthetee</td><td>-10</td><td>134</td></tr><tr><td>2</td><td>Colly45x</td><td>-7</td><td>137</td></tr><tr><td>3</td><td>HorusPhoenix</td><td>-3</td><td>141</td></tr></table></div>"
 }
