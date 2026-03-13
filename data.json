@@ -3,7 +3,38 @@
   "date": "March 13th-20th 2026",
   "par": "72",
   "isSig": false,
-  "players": [],
+  "players": [
+    {
+      "name": "Horusphoenix",
+      "console": "Xbox",
+      "r1": "",
+      "r2": "",
+      "r3": "",
+      "r4": "",
+      "birdies": "",
+      "isLow": false
+    },
+    {
+      "name": "x3offthetee",
+      "console": "Xbox",
+      "r1": "",
+      "r2": "",
+      "r3": "",
+      "r4": "",
+      "birdies": "",
+      "isLow": false
+    },
+    {
+      "name": "Colly45x",
+      "console": "Xbox",
+      "r1": "",
+      "r2": "",
+      "r3": "",
+      "r4": "",
+      "birdies": "",
+      "isLow": false
+    }
+  ],
   "backupSeason": {},
   "backupHistory": "",
   "season": {},
