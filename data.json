@@ -11,8 +11,10 @@
       "r2": "",
       "r3": "",
       "r4": "",
+      "total": 0,
       "birdies": "",
-      "isLow": false
+      "isLow": false,
+      "toParVal": 999
     },
     {
       "name": "x3offthetee",
@@ -21,8 +23,10 @@
       "r2": "",
       "r3": "",
       "r4": "",
+      "total": 0,
       "birdies": "",
-      "isLow": false
+      "isLow": false,
+      "toParVal": 999
     },
     {
       "name": "Colly45x",
@@ -31,12 +35,14 @@
       "r2": "",
       "r3": "",
       "r4": "",
+      "total": 0,
       "birdies": "",
-      "isLow": false
+      "isLow": false,
+      "toParVal": 999
     }
   ],
   "backupSeason": {},
-  "backupHistory": "",
+  "backupHistory": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13th-20th 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr></table></div>",
   "season": {},
-  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13th-20th 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr></table></div>"
+  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13th-20th 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr></table></div><div class=\"history-header\" onclick=\"toggleHistory(this)\">Nairn Scotland (March 13th-20th 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr></table></div>"
 }
