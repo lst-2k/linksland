@@ -125,7 +125,7 @@
       "toParVal": 18
     },
     {
-      "name": "Icecream",
+      "name": "IceCream",
       "console": "PS",
       "r1": "80",
       "r2": "83",
@@ -161,74 +161,8 @@
       "toParVal": 32
     }
   ],
-  "backupSeason": {
-    "WingisBack": {
-      "points": 200,
-      "console": "PS",
-      "eventsPlayed": 1
-    },
-    "Horusphoenix": {
-      "points": 175,
-      "console": "Xbox",
-      "eventsPlayed": 1
-    },
-    "x3offthetee": {
-      "points": 150,
-      "console": "Xbox",
-      "eventsPlayed": 1
-    },
-    "Colly45x": {
-      "points": 150,
-      "console": "Xbox",
-      "eventsPlayed": 1
-    },
-    "Tenbobnote": {
-      "points": 90,
-      "console": "PS",
-      "eventsPlayed": 1
-    },
-    "Keep_of_Kalessin": {
-      "points": 80,
-      "console": "PS",
-      "eventsPlayed": 1
-    },
-    "Hoplinkz": {
-      "points": 70,
-      "console": "PS",
-      "eventsPlayed": 1
-    },
-    "Hendomedes": {
-      "points": 60,
-      "console": "Xbox",
-      "eventsPlayed": 1
-    },
-    "Geordieboy85": {
-      "points": 50,
-      "console": "PS",
-      "eventsPlayed": 1
-    },
-    "Mr Longpole": {
-      "points": 40,
-      "console": "Xbox",
-      "eventsPlayed": 1
-    },
-    "Icecream": {
-      "points": 30,
-      "console": "PS",
-      "eventsPlayed": 1
-    },
-    "SlimmerShady": {
-      "points": 20,
-      "console": "PS",
-      "eventsPlayed": 1
-    },
-    "Polekatt": {
-      "points": 10,
-      "console": "PC",
-      "eventsPlayed": 1
-    }
-  },
-  "backupHistory": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">The Moray Medal, Nairn-Scotland (13-19 March 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr><tr><td>1</td><td>WingisBack</td><td>-5</td><td>137</td></tr><tr><td>2</td><td>Horusphoenix</td><td>-4</td><td>138</td></tr><tr><td>T3</td><td>x3offthetee</td><td>-3</td><td>139</td></tr><tr><td>T3</td><td>Colly45x</td><td>-3</td><td>139</td></tr><tr><td>5</td><td>Tenbobnote</td><td>+1</td><td>143</td></tr><tr><td>6</td><td>Keep_of_Kalessin</td><td>+3</td><td>145</td></tr><tr><td>7</td><td>Hoplinkz</td><td>+7</td><td>149</td></tr><tr><td>8</td><td>Hendomedes</td><td>+9</td><td>151</td></tr><tr><td>9</td><td>Geordieboy85</td><td>+12</td><td>154</td></tr><tr><td>10</td><td>Mr Longpole</td><td>+18</td><td>160</td></tr><tr><td>11</td><td>Icecream</td><td>+21</td><td>163</td></tr><tr><td>12</td><td>SlimmerShady</td><td>+31</td><td>173</td></tr><tr><td>13</td><td>Polekatt</td><td>+32</td><td>174</td></tr></table></div>",
+  "backupSeason": {},
+  "backupHistory": "",
   "season": {
     "WingisBack": {
       "points": 210,
@@ -280,7 +214,7 @@
       "console": "Xbox",
       "eventsPlayed": 1
     },
-    "Icecream": {
+    "IceCream": {
       "points": 30,
       "console": "PS",
       "eventsPlayed": 1
@@ -296,5 +230,5 @@
       "eventsPlayed": 1
     }
   },
-  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">The Moray Medal, Nairn-Scotland (13-19 March 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr><tr><td>1</td><td>WingisBack</td><td>-5</td><td>137</td></tr><tr><td>2</td><td>Horusphoenix</td><td>-4</td><td>138</td></tr><tr><td>T3</td><td>x3offthetee</td><td>-3</td><td>139</td></tr><tr><td>T3</td><td>Colly45x</td><td>-3</td><td>139</td></tr><tr><td>5</td><td>Tenbobnote</td><td>+1</td><td>143</td></tr><tr><td>6</td><td>Keep_of_Kalessin</td><td>+3</td><td>145</td></tr><tr><td>7</td><td>Hoplinkz</td><td>+7</td><td>149</td></tr><tr><td>8</td><td>Hendomedes</td><td>+9</td><td>151</td></tr><tr><td>9</td><td>Geordieboy85</td><td>+12</td><td>154</td></tr><tr><td>10</td><td>Mr Longpole</td><td>+18</td><td>160</td></tr><tr><td>11</td><td>Icecream</td><td>+21</td><td>163</td></tr><tr><td>12</td><td>SlimmerShady</td><td>+31</td><td>173</td></tr><tr><td>13</td><td>Polekatt</td><td>+32</td><td>174</td></tr></table></div><div class=\"history-header\" onclick=\"toggleHistory(this)\">The Moray Medal, Nairn-Scotland (13-19 March 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr><tr><td>1</td><td>WingisBack</td><td>-5</td><td>137</td></tr><tr><td>2</td><td>Horusphoenix</td><td>-4</td><td>138</td></tr><tr><td>T3</td><td>x3offthetee</td><td>-3</td><td>139</td></tr><tr><td>T3</td><td>Colly45x</td><td>-3</td><td>139</td></tr><tr><td>5</td><td>Tenbobnote</td><td>+1</td><td>143</td></tr><tr><td>6</td><td>Keep_of_Kalessin</td><td>+3</td><td>145</td></tr><tr><td>7</td><td>Hoplinkz</td><td>+7</td><td>149</td></tr><tr><td>8</td><td>Hendomedes</td><td>+9</td><td>151</td></tr><tr><td>9</td><td>Geordieboy85</td><td>+12</td><td>154</td></tr><tr><td>10</td><td>Mr Longpole</td><td>+18</td><td>160</td></tr><tr><td>11</td><td>Icecream</td><td>+21</td><td>163</td></tr><tr><td>12</td><td>SlimmerShady</td><td>+31</td><td>173</td></tr><tr><td>13</td><td>Polekatt</td><td>+32</td><td>174</td></tr></table></div>"
+  "history": "<div class=\"history-header\" onclick=\"toggleHistory(this)\">The Moray Medal, Nairn-Scotland (13-19 March 2026) </div><div class=\"history-content\"><table><tr><th>Pos</th><th>Player</th><th>Par</th><th>Tot</th></tr><tr><td>1</td><td>WingisBack</td><td>-5</td><td>137</td></tr><tr><td>2</td><td>Horusphoenix</td><td>-4</td><td>138</td></tr><tr><td>T3</td><td>x3offthetee</td><td>-3</td><td>139</td></tr><tr><td>T3</td><td>Colly45x</td><td>-3</td><td>139</td></tr><tr><td>5</td><td>Tenbobnote</td><td>+1</td><td>143</td></tr><tr><td>6</td><td>Keep_of_Kalessin</td><td>+3</td><td>145</td></tr><tr><td>7</td><td>Hoplinkz</td><td>+7</td><td>149</td></tr><tr><td>8</td><td>Hendomedes</td><td>+9</td><td>151</td></tr><tr><td>9</td><td>Geordieboy85</td><td>+12</td><td>154</td></tr><tr><td>10</td><td>Mr Longpole</td><td>+18</td><td>160</td></tr><tr><td>11</td><td>IceCream</td><td>+21</td><td>163</td></tr><tr><td>12</td><td>SlimmerShady</td><td>+31</td><td>173</td></tr><tr><td>13</td><td>Polekatt</td><td>+32</td><td>174</td></tr></table></div>"
 }
