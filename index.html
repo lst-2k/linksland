@@ -32,6 +32,9 @@
         .fa-playstation { color: var(--ps-blue); } .fa-xbox { color: var(--xbox-green); } .fa-steam { color: var(--steam-blue); }
         .to-par-cell { font-weight: 900; font-size: 1em; background: #fcfcfc; width: 55px; }
         .under-par { color: var(--under-red); }
+		.even-par { color: var(--golf-green); font-weight: bold; }
+		.over-par { color: #333; }
+		.wins-col { color: #d32f2f; font-weight: bold; }
         
         h3 { color: var(--golf-green); font-size: 1.05em; padding: 10px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px; }
         
@@ -66,41 +69,55 @@
     </div>
 
     <h3>Season Standings</h3>
-    <div class="scroller">
-        <table>
-            <thead>
-                <tr><th>Rank</th><th class="player-col">Player</th><th>Played</th><th>Total Points</th></tr>
-            </thead>
-            <tbody id="seasonBody"></tbody>
-        </table>
-    </div>
+		<div class="scroller">
+			<table>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th class="player-col">Player</th>
+						<th>Played</th>
+						<th>Wins</th> <th>Total Points</th>
+					</tr>
+				</thead>
+				<tbody id="seasonBody"></tbody>
+			</table>
+		</div>
 
     <div id="historyContainer"></div>
 </div>
 
 <script>
-    async function loadLeaderboard() {
-        try {
-            const response = await fetch('data.json');
-            const data = await response.json();
-            
-            const headerBar = document.getElementById('headerBar');
-            document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'}`;
-            document.getElementById('eventDateLabel').innerText = data.date || '';
-            
-            if(data.isSig) {
-                headerBar.classList.add('is-major');
-                document.getElementById('sigStatus').innerHTML = '<span class="major-tag">🏆 MAJOR</span>';
-            } else {
-                headerBar.classList.remove('is-major');
-                document.getElementById('sigStatus').innerHTML = '';
-            }
+	async function loadLeaderboard() {
+		try {
+			const response = await fetch('data.json');
+			const data = await response.json();
+			
+			// ... (existing header code) ...
 
-            renderLeaderboard(data);
-            renderStandings(data.season); 
-            renderHistory(data.history);
-        } catch (e) { console.error("Error loading data.json:", e); }
-    }
+			// Create a Win Counter object
+			const winMap = {};
+			
+			// Parse history to count wins if history exists
+			if (data.history) {
+				const temp = document.createElement('div');
+				temp.innerHTML = data.history;
+				const tables = temp.querySelectorAll('table');
+				
+				tables.forEach(table => {
+					const firstRow = table.querySelector('tbody tr');
+					if (firstRow) {
+						// Get player name from the second column (index 1)
+						const winnerName = firstRow.cells[1].innerText.trim();
+						winMap[winnerName] = (winMap[winnerName] || 0) + 1;
+					}
+				});
+			}
+
+			renderLeaderboard(data);
+			renderStandings(data.season, winMap); // Pass winMap here
+			renderHistory(data.history);
+		} catch (e) { console.error("Error loading data.json:", e); }
+	}
 
     function getPlatformIcon(p) {
         const c = (p || "").toLowerCase();
@@ -140,37 +157,66 @@
         });
     }
 
-    function renderStandings(seasonData) {
-        const sBody = document.getElementById('seasonBody');
-        if (!sBody || !seasonData) return;
-        const sorted = Object.entries(seasonData).map(([name, info]) => ({ name, ...info })).sort((a, b) => b.points - a.points);
-        sBody.innerHTML = '';
-        sorted.forEach((p, i) => {
-            let firstIdx = i;
-            while (firstIdx > 0 && sorted[firstIdx - 1].points === p.points) firstIdx--;
-            const isTied = (i > 0 && sorted[i-1].points === p.points) || (i < sorted.length-1 && sorted[i+1].points === p.points);
-            const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
-            sBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td>${p.eventsPlayed || 0}</td><td style="color:var(--golf-green); font-weight:bold;">${p.points}</td></tr>`;
-        });
-    }
+	function renderStandings(seasonData, winMap = {}) {
+		const sBody = document.getElementById('seasonBody');
+		if (!sBody || !seasonData) return;
+		
+		const sorted = Object.entries(seasonData)
+			.map(([name, info]) => ({ 
+				name, 
+				...info, 
+				wins: winMap[name] || 0 
+			}))
+			.sort((a, b) => b.points - a.points);
+
+		sBody.innerHTML = '';
+		sorted.forEach((p, i) => {
+			let firstIdx = i;
+			while (firstIdx > 0 && sorted[firstIdx - 1].points === p.points) firstIdx--;
+			const isTied = (i > 0 && sorted[i-1].points === p.points) || (i < sorted.length-1 && sorted[i+1].points === p.points);
+			const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
+			
+			sBody.innerHTML += `
+				<tr>
+					<td>${rankLabel}</td>
+					<td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
+					<td>${p.eventsPlayed || 0}</td>
+					<td class="wins-col">${p.wins}</td> <td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
+				</tr>`;
+		});
+	}
 
     function renderHistory(historyHTML) {
-        const hDiv = document.getElementById('historyContainer');
-        if (hDiv && historyHTML) { 
-            // Create a temp element to parse the HTML string
-            let temp = document.createElement('div');
-            temp.innerHTML = historyHTML.replace(/>\+999</g, '>--<');
-            
-            // Loop through headers and check for Trophy emoji to apply purple border
-            temp.querySelectorAll('.history-header').forEach(header => {
-                if (header.innerText.includes('🏆')) {
-                    header.classList.add('major-border');
-                }
-            });
-            
-            hDiv.innerHTML = `<h3>Weekly History</h3>` + temp.innerHTML; 
-        }
-    }
+		const hDiv = document.getElementById('historyContainer');
+		if (hDiv && historyHTML) { 
+			// Create a temp element to parse the HTML string
+			let temp = document.createElement('div');
+			temp.innerHTML = historyHTML.replace(/>\+999</g, '>--<');
+			
+			// 1. Handle Major styling for headers
+			temp.querySelectorAll('.history-header').forEach(header => {
+				if (header.innerText.includes('🏆')) {
+					header.classList.add('major-border');
+				}
+			});
+
+			// 2. Apply "To Par" Color Scheme to table cells
+			// We look for cells that contain E, a plus sign, or a minus sign
+			temp.querySelectorAll('td').forEach(td => {
+				const val = td.innerText.trim();
+				
+				if (val === 'E') {
+					td.classList.add('even-par');
+				} else if (val.startsWith('-')) {
+					td.classList.add('under-par');
+				} else if (val.startsWith('+')) {
+					td.classList.add('over-par');
+				}
+			});
+			
+			hDiv.innerHTML = `<h3>Weekly History</h3>` + temp.innerHTML; 
+		}
+	}
 
     function toggleHistory(header) {
         const content = header.nextElementSibling;
