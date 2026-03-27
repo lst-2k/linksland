@@ -92,29 +92,38 @@
 			const response = await fetch('data.json');
 			const data = await response.json();
 			
-			// ... (existing header code) ...
-
-			// Create a Win Counter object
-			const winMap = {};
+			const headerBar = document.getElementById('headerBar');
+			document.getElementById('venueName').innerText = `⛳ ${data.venue || 'Tournament'}`;
+			document.getElementById('eventDateLabel').innerText = data.date || '';
 			
-			// Parse history to count wins if history exists
+			if(data.isSig) {
+				headerBar.classList.add('is-major');
+				document.getElementById('sigStatus').innerHTML = '<span class="major-tag">🏆 MAJOR</span>';
+			} else {
+				headerBar.classList.remove('is-major');
+				document.getElementById('sigStatus').innerHTML = '';
+			}
+
+			// Logic to count wins from the history HTML string
+			const winMap = {};
 			if (data.history) {
 				const temp = document.createElement('div');
 				temp.innerHTML = data.history;
 				const tables = temp.querySelectorAll('table');
 				
 				tables.forEach(table => {
-					const firstRow = table.querySelector('tbody tr');
-					if (firstRow) {
-						// Get player name from the second column (index 1)
-						const winnerName = firstRow.cells[1].innerText.trim();
+					// Find the first row of the body (the winner)
+					const winnerRow = table.querySelector('tr:nth-child(2)'); 
+					if (winnerRow) {
+						// Get text and trim any whitespace/icons
+						const winnerName = winnerRow.cells[1].innerText.trim();
 						winMap[winnerName] = (winMap[winnerName] || 0) + 1;
 					}
 				});
 			}
 
 			renderLeaderboard(data);
-			renderStandings(data.season, winMap); // Pass winMap here
+			renderStandings(data.season, winMap); 
 			renderHistory(data.history);
 		} catch (e) { console.error("Error loading data.json:", e); }
 	}
@@ -161,13 +170,11 @@
 		const sBody = document.getElementById('seasonBody');
 		if (!sBody || !seasonData) return;
 		
-		const sorted = Object.entries(seasonData)
-			.map(([name, info]) => ({ 
-				name, 
-				...info, 
-				wins: winMap[name] || 0 
-			}))
-			.sort((a, b) => b.points - a.points);
+		const sorted = Object.entries(seasonData).map(([name, info]) => ({ 
+			name, 
+			...info, 
+			wins: winMap[name] || 0 
+		})).sort((a, b) => b.points - a.points);
 
 		sBody.innerHTML = '';
 		sorted.forEach((p, i) => {
@@ -181,7 +188,8 @@
 					<td>${rankLabel}</td>
 					<td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
 					<td>${p.eventsPlayed || 0}</td>
-					<td class="wins-col">${p.wins}</td> <td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
+					<td style="font-weight:bold; color:#d32f2f;">${p.wins}</td>
+					<td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
 				</tr>`;
 		});
 	}
