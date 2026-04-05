@@ -35,16 +35,15 @@
 		.even-par { color: var(--golf-green); font-weight: bold; }
 		.over-par { color: #333; }
 		.wins-col { color: #d32f2f; font-weight: bold; }
-		.rank-up { color: #2e7d32; font-size: 0.85em; }   /* Green Up */
-		.rank-down { color: #d32f2f; font-size: 0.85em; } /* Red Down */
-		.rank-steady { color: #999; font-size: 0.85em; }  /* Grey Dash */
+		.rank-up { color: #2e7d32; font-size: 0.85em; }
+		.rank-down { color: #d32f2f; font-size: 0.85em; }
+		.rank-steady { color: #999; font-size: 0.85em; }
 		.trend-col { width: 30px; text-align: center; }
         
         h3 { color: var(--golf-green); font-size: 1.05em; padding: 10px 15px; margin: 0; background: #f9f9f9; border-bottom: 1px solid #eee; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* History Styling */
         .history-header { background: #fff; padding: 12px 15px; border: 1px solid #ddd; margin-top: 5px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--golf-green); font-size: 0.9em; }
-        .history-header.major-border { border-left-color: var(--major-purple); } /* Changes green bar to purple */
+        .history-header.major-border { border-left-color: var(--major-purple); }
         .history-header::after { content: '\f0d7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
         .history-content { display: none; background: white; border: 1px solid #ddd; border-top: none; padding: 10px; }
     </style>
@@ -81,6 +80,7 @@
 						<th class="trend-col"></th> <th class="player-col">Player</th>
 						<th>Played</th>
 						<th>Wins</th>
+						<th>ACC</th>
 						<th>Total Points</th>
 					</tr>
 				</thead>
@@ -109,26 +109,8 @@
 				document.getElementById('sigStatus').innerHTML = '';
 			}
 
-			// Logic to count wins from the history HTML string
-			const winMap = {};
-			if (data.history) {
-				const temp = document.createElement('div');
-				temp.innerHTML = data.history;
-				const tables = temp.querySelectorAll('table');
-				
-				tables.forEach(table => {
-					// Find the first row of the body (the winner)
-					const winnerRow = table.querySelector('tr:nth-child(2)'); 
-					if (winnerRow) {
-						// Get text and trim any whitespace/icons
-						const winnerName = winnerRow.cells[1].innerText.trim();
-						winMap[winnerName] = (winMap[winnerName] || 0) + 1;
-					}
-				});
-			}
-
 			renderLeaderboard(data);
-			renderStandings(data.season, winMap); 
+			renderStandings(data.season); 
 			renderHistory(data.history);
 		} catch (e) { console.error("Error loading data.json:", e); }
 	}
@@ -171,23 +153,23 @@
         });
     }
 
-	function renderStandings(seasonData, winMap = {}) {
+	function renderStandings(seasonData) {
 		const sBody = document.getElementById('seasonBody');
 		if (!sBody || !seasonData) return;
 		
-		// Sort players by points
 		const sorted = Object.entries(seasonData).map(([name, info]) => ({ 
 			name, 
-			...info, 
-			wins: winMap[name] || 0 
+			...info 
 		})).sort((a, b) => b.points - a.points);
 
 		sBody.innerHTML = '';
 		sorted.forEach((p, i) => {
 			const currentRank = i + 1;
 			const previousRank = parseInt(p.prevRank) || currentRank;
+			const accVal = p.acc || 0;
+			const accDisp = accVal === 0 ? "E" : (accVal > 0 ? `+${accVal}` : accVal);
+			const accClass = accVal < 0 ? "under-par" : (accVal === 0 ? "even-par" : "");
 			
-			// Determine Trend Icon
 			let trendHtml = '<span class="rank-steady">●</span>';
 			if (currentRank < previousRank) {
 				trendHtml = '<span class="rank-up"><i class="fa-solid fa-caret-up"></i></span>';
@@ -195,43 +177,38 @@
 				trendHtml = '<span class="rank-down"><i class="fa-solid fa-caret-down"></i></span>';
 			}
 
-			// Rank Tie Logic
 			let firstIdx = i;
 			while (firstIdx > 0 && sorted[firstIdx - 1].points === p.points) firstIdx--;
 			const isTied = (i > 0 && sorted[i-1].points === p.points) || (i < sorted.length-1 && sorted[i+1].points === p.points);
 			const rankLabel = isTied ? `T${firstIdx + 1}` : currentRank;
 			
 			sBody.innerHTML += `
-				<tr>
-					<td>${rankLabel}</td>
-					<td class="trend-col">${trendHtml}</td>
-					<td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
-					<td>${p.eventsPlayed || 0}</td>
-					<td style="font-weight:bold; color:#d32f2f;">${p.wins}</td>
-					<td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
-				</tr>`;
+            <tr>
+                <td>${rankLabel}</td>
+                <td class="trend-col">${trendHtml}</td>
+                <td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td>
+                <td>${p.eventsPlayed || 0}</td>
+                <td style="font-weight:bold; color:#d32f2f;">${p.wins || 0}</td>
+                <td style="font-weight:bold;" class="${accClass}">${accDisp}</td>
+                <td style="color:var(--golf-green); font-weight:bold;">${p.points}</td>
+            </tr>`;
 		});
 	}
 
     function renderHistory(historyHTML) {
 		const hDiv = document.getElementById('historyContainer');
 		if (hDiv && historyHTML) { 
-			// Create a temp element to parse the HTML string
 			let temp = document.createElement('div');
 			temp.innerHTML = historyHTML.replace(/>\+999</g, '>--<');
 			
-			// 1. Handle Major styling for headers
 			temp.querySelectorAll('.history-header').forEach(header => {
 				if (header.innerText.includes('🏆')) {
 					header.classList.add('major-border');
 				}
 			});
 
-			// 2. Apply "To Par" Color Scheme to table cells
-			// We look for cells that contain E, a plus sign, or a minus sign
 			temp.querySelectorAll('td').forEach(td => {
 				const val = td.innerText.trim();
-				
 				if (val === 'E') {
 					td.classList.add('even-par');
 				} else if (val.startsWith('-')) {
