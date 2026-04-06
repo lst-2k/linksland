@@ -65,7 +65,7 @@
     <div class="scroller">
         <table>
             <thead>
-                <tr><th>Pos</th><th class="player-col">Player</th><th>To Par</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th><th style="background:#0277bd;">Bonus</th><th>Pts</th></tr>
+                <tr><th>Pos</th><th class="player-col">Player</th><th>To Par</th><th>R1</th><th>R2</th><th>Total</th><th style="background:#0277bd;">Bonus</th><th>Pts</th></tr>
             </thead>
             <tbody id="liveBody"></tbody>
         </table>
@@ -149,9 +149,8 @@
             const rankLabel = isTied ? `T${firstIdx + 1}` : i + 1;
             const ptsData = calculatePts(firstIdx + 1, data.isSig, (parseInt(p.birdies) > 0), p.isLow);
             const toParDisp = p.toPar === 0 ? "E" : (p.toPar > 0 ? `+${p.toPar}` : p.toPar);
-            lBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.r3||'-'}</td><td>${p.r4||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold; font-size:0.85em;">${ptsData.bonusLabel}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;
-        });
-    }
+			lBody.innerHTML += `<tr><td>${rankLabel}</td><td class="player-col">${getPlatformIcon(p.console)} ${p.name}</td><td class="to-par-cell ${p.toPar < 0 ? 'under-par' : ''}">${toParDisp}</td><td>${p.r1||'-'}</td><td>${p.r2||'-'}</td><td>${p.total}</td><td style="color:#0277bd; font-weight:bold; font-size:0.85em;">${ptsData.bonusLabel}</td><td style="color:var(--golf-green); font-weight:bold;">${ptsData.total}</td></tr>`;        });
+		}
 
 	function renderStandings(seasonData) {
 		const sBody = document.getElementById('seasonBody');
