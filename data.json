@@ -211,7 +211,7 @@
     },
     {
       "name": "Cockatoos",
-      "console": "PS",
+      "console": "PC",
       "r1": "78",
       "r2": "71",
       "r3": "",
@@ -393,7 +393,7 @@
     },
     "Cockatoos": {
       "points": 50,
-      "console": "PS",
+      "console": "PC",
       "eventsPlayed": 1,
       "wins": 0,
       "acc": 10,
@@ -549,7 +549,7 @@
     },
     "Cockatoos": {
       "points": 70,
-      "console": "PS",
+      "console": "PC",
       "eventsPlayed": 2,
       "wins": 0,
       "acc": 17,
